@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gpsd-api-gateway-service
+  namespace: gpsd
+spec:
+  selector:
+    app: gpsd-api-gateway
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+      nodePort: 30080 
+  type: NodePort
+

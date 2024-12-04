@@ -1,0 +1,1 @@
+alias gpsd='kubectl get pods -n gpsd; kubectl get services -n gpsd;'

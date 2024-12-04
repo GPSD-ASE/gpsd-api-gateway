@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gpsd-api-gateway
+  namespace: gpsd
+  labels:
+    app: gpsd-api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gpsd-api-gateway
+  template:
+    metadata:
+      labels:
+        app: gpsd-api-gateway
+    spec:
+      containers:
+      - name: gpsd-api-gateway
+        image: paranjik/gpsd-api-gateway:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: "production"
+
