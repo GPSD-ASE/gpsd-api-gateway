@@ -106,6 +106,7 @@ paths:
     post:
       summary: Send notification
       description: Sends updates or notifications to app users and SMS to others.
+      x-internal: true
       requestBody:
         required: true
         content:
@@ -128,6 +129,7 @@ paths:
     get:
       summary: Load map data
       description: Loads the map with current incidents, live traffic, and evacuation routes.
+      x-internal: true
       parameters:
         - name: region
           in: query
@@ -205,6 +207,7 @@ paths:
     get:
       summary: Get user profile
       description: Retrieves profile details for a specific user.
+      x-internal: true
       parameters:
         - name: userId
           in: path
@@ -225,6 +228,7 @@ paths:
     post:
       summary: Register sensors
       description: Registers a list of sensors allowed by the user for that device.
+      x-internal: true
       parameters:
         - name: userId
           in: path
@@ -271,6 +275,7 @@ paths:
     get:
       summary: Get sensor data for incident
       description: Get the sensor data collected for a specific incident by a particular user device.
+      x-internal: true
       parameters:
         - name: incidentId
           in: path
