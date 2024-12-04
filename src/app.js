@@ -3,7 +3,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Basic route
-app.get('/', (req, res) => {
+app.get('/api/', (req, res) => {
     res.send('API Gateway is running!');
 });
 
