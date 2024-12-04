@@ -1,0 +1,294 @@
+openapi: 3.0.0
+info:
+  title: GPSD API Gateway Specification
+  version: 1.0.0
+  description: API Gateway specification for GPSD disaster response system.
+servers:
+  - url: http://127.0.0.1:54987
+paths:
+  /api/incident/report:
+    post:
+      summary: Submit a new incident
+      description: Allows reporters to submit a new incident.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                location:
+                  type: string
+                type:
+                  type: string
+                severity:
+                  type: string
+                userId:
+                  type: string
+      responses:
+        '200':
+          description: Incident reported successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  incidentId:
+                    type: string
+                  status:
+                    type: string
+  /api/incident/{incidentId}:
+    get:
+      summary: Get incident details
+      description: Retrieves detailed information about a specific incident.
+      parameters:
+        - name: incidentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Incident details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  incidentDetails:
+                    type: object
+    patch:
+      summary: Update incident status
+      description: Updates incident status.
+      parameters:
+        - name: incidentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Incident status updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  incidentDetails:
+                    type: object
+  /api/evacuation/{incidentId}/retrievePlan:
+    get:
+      summary: Retrieve evacuation plan
+      description: Fetches plan for evacuation based on real-time data.
+      parameters:
+        - name: incidentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Evacuation plan retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  recommendedRoutes:
+                    type: array
+                    items:
+                      type: string
+                  shelters:
+                    type: array
+                    items:
+                      type: string
+  /api/notification:
+    post:
+      summary: Send notification
+      description: Sends updates or notifications to app users and SMS to others.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                listOfUsers:
+                  type: array
+                  items:
+                    type: string
+                content:
+                  type: string
+                incidentDetails:
+                  type: object
+      responses:
+        '202':
+          description: Notification sent asynchronously
+  /api/map/load:
+    get:
+      summary: Load map data
+      description: Loads the map with current incidents, live traffic, and evacuation routes.
+      parameters:
+        - name: region
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: filters
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Map data loaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mapData:
+                    type: object
+  /api/user/register:
+    post:
+      summary: Register a new user
+      description: Registers a new user with the system.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                  registrationStatus:
+                    type: string
+  /api/user/login:
+    post:
+      summary: Authenticate user
+      description: Authenticates a user and provides an access token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+  /api/user/profile/{userId}:
+    get:
+      summary: Get user profile
+      description: Retrieves profile details for a specific user.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  profileData:
+                    type: object
+  /api/user/{userId}/device/{userDeviceId}:
+    post:
+      summary: Register sensors
+      description: Registers a list of sensors allowed by the user for that device.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userDeviceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  sensor:
+                    type: string
+      responses:
+        '201':
+          description: Sensors registered successfully
+    delete:
+      summary: Restrict a sensor
+      description: Restrict an already allowed sensor for data collection on the device.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userDeviceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sensor restricted successfully
+  /api/incident/{incidentId}/sensorData/device/{userDeviceId}:
+    get:
+      summary: Get sensor data for incident
+      description: Get the sensor data collected for a specific incident by a particular user device.
+      parameters:
+        - name: incidentId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userDeviceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sensor data retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sensorData:
+                    type: object
