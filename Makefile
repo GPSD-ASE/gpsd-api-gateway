@@ -22,6 +22,7 @@ build:
 
 setup:
 	kubectl create configmap gpsd-nginx-config --from-file=nginx.conf -n gpsd || kubectl replace configmap gpsd-nginx-config --from-file=nginx.conf -n gpsd
+	kubectl create secret generic gpsd-api-gateway-secrets --from-literal=JWT_SECRET=gpsdjwtsecretkey --from-literal=REFRESH_SECRET=gpsdrefreshsecretkey -n gpsd
 	kubectl create secret tls gpsd-api-gateway-certificates --cert=private/certs/api.gpsd.com.crt --key=private/certs/api.gpsd.com.key -n gpsd
 	kubectl apply -f deployments/api-gateway-deployment.yaml
 	kubectl apply -f deployments/nginx-deployment.yaml
@@ -39,6 +40,8 @@ all: build build-image push-image setup run
 clean:
 	kubectl delete all --all -n gpsd || true
 	kubectl delete configmap gpsd-nginx-config -n gpsd
+	kubectl delete secret gpsd-api-gateway-secrets -n gpsd
+	kubectl delete secret gpsd-api-gateway-certificates -n gpsd
 
 	kubectl delete namespace gpsd || true
 	sleep 2

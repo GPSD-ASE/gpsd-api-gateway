@@ -10,6 +10,8 @@ paths:
     post:
       summary: Submit a new incident
       description: Allows reporters to submit a new incident.
+      tags:
+        - Incident
       requestBody:
         required: true
         content:
@@ -41,6 +43,8 @@ paths:
     get:
       summary: Get incident details
       description: Retrieves detailed information about a specific incident.
+      tags:
+        - Incident
       parameters:
         - name: incidentId
           in: path
@@ -60,6 +64,8 @@ paths:
     patch:
       summary: Update incident status
       description: Updates incident status.
+      tags:
+        - Incident
       parameters:
         - name: incidentId
           in: path
@@ -80,6 +86,8 @@ paths:
     get:
       summary: Retrieve evacuation plan
       description: Fetches plan for evacuation based on real-time data.
+      tags:
+        - Evacuation
       parameters:
         - name: incidentId
           in: path
@@ -106,6 +114,8 @@ paths:
     post:
       summary: Send notification
       description: Sends updates or notifications to app users and SMS to others.
+      tags:
+        - Notification
       x-internal: true
       requestBody:
         required: true
@@ -129,6 +139,8 @@ paths:
     get:
       summary: Load map data
       description: Loads the map with current incidents, live traffic, and evacuation routes.
+      tags:
+        - Map
       x-internal: true
       parameters:
         - name: region
@@ -155,6 +167,8 @@ paths:
     post:
       summary: Register a new user
       description: Registers a new user with the system.
+      tags:
+        - Authentication
       requestBody:
         required: true
         content:
@@ -166,22 +180,25 @@ paths:
                   type: string
                 password:
                   type: string
+                role:
+                  type: string
       responses:
         '201':
-          description: User registered successfully
+          description: User registered successfully.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  userId:
+                  message:
                     type: string
-                  registrationStatus:
-                    type: string
+                    example: "User registered successfully."
   /api/user/login:
     post:
       summary: Authenticate user
       description: Authenticates a user and provides an access token.
+      tags:
+        - Authentication
       requestBody:
         required: true
         content:
@@ -195,7 +212,7 @@ paths:
                   type: string
       responses:
         '200':
-          description: Authentication successful
+          description: Authentication successful.
           content:
             application/json:
               schema:
@@ -203,10 +220,93 @@ paths:
                 properties:
                   token:
                     type: string
+                  message:
+                    type: string
+  /api/user/refresh:
+    post:
+      summary: Refresh the access token
+      description: Generates a new access token for already logged in user.
+      tags:
+        - Authentication
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Access token refreshed successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    description: The new access token.
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        '401':
+          description: Missing or invalid refresh token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Refresh token missing"
+        '403':
+          description: Refresh token is invalid or expired.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid refresh token"
+  /api/user/logout:
+    post:
+      summary: Logout the user
+      description: Invalidates the user's current access token.
+      tags:
+        - Authentication
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Logged out successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Logged out successfully"
+        '401':
+          description: Unauthorized due to missing or invalid access token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Token missing or invalid"
+        '403':
+          description: Token has been revoked or expired.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Token has been revoked"
   /api/user/profile/{userId}:
     get:
       summary: Get user profile
       description: Retrieves profile details for a specific user.
+      tags:
+        - Profile
       x-internal: true
       parameters:
         - name: userId
@@ -228,6 +328,8 @@ paths:
     post:
       summary: Register sensors
       description: Registers a list of sensors allowed by the user for that device.
+      tags:
+        - User Device
       x-internal: true
       parameters:
         - name: userId
@@ -257,6 +359,8 @@ paths:
     delete:
       summary: Restrict a sensor
       description: Restrict an already allowed sensor for data collection on the device.
+      tags:
+        - User Device
       parameters:
         - name: userId
           in: path
@@ -275,6 +379,8 @@ paths:
     get:
       summary: Get sensor data for incident
       description: Get the sensor data collected for a specific incident by a particular user device.
+      tags:
+        - User Device
       x-internal: true
       parameters:
         - name: incidentId
@@ -297,3 +403,9 @@ paths:
                 properties:
                   sensorData:
                     type: object
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

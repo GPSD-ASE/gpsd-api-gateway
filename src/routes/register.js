@@ -18,7 +18,8 @@ router.post('/', (req, res) => {
         return res.status(409).json({ error: 'User already exists.' });
     }
 
-    users.push({ username, password, role: 'user' });
+    // TODO: implement rbac
+    users.push({ username, password, role: 'admin' });
 
     res.status(201).json({ message: 'User registered successfully.' });
 });
