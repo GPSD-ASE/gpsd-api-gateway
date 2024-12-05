@@ -26,7 +26,18 @@ spec:
         - name: nginx-config
           mountPath: /etc/nginx/nginx.conf
           subPath: nginx.conf
+        - name: certs
+          mountPath: /etc/nginx/certs
+          readOnly: true
       volumes:
         - name: nginx-config
           configMap:
             name: gpsd-nginx-config
+        - name: certs
+          secret:
+            secretName: gpsd-api-gateway-certificates
+            items:
+              - key: tls.crt
+                path: api.gpsd.com.crt
+              - key: tls.key
+                path: api.gpsd.com.key

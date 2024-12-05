@@ -13,11 +13,16 @@ run-image:
 clean-image:
 	docker rmi $(docker images --filter "dangling=true" -q) -f
 
+certs:
+	chmod +x private/pki.sh
+	bash private/pki.sh
+
 build:
 	kubectl create namespace gpsd || true
 
 setup:
 	kubectl create configmap gpsd-nginx-config --from-file=nginx.conf -n gpsd || kubectl replace configmap gpsd-nginx-config --from-file=nginx.conf -n gpsd
+	kubectl create secret tls gpsd-api-gateway-certificates --cert=private/certs/api.gpsd.com.crt --key=private/certs/api.gpsd.com.key -n gpsd
 	kubectl apply -f deployments/api-gateway-deployment.yaml
 	kubectl apply -f deployments/nginx-deployment.yaml
 	kubectl apply -f services/api-gateway-service.yaml
@@ -29,7 +34,7 @@ run:
 	kubectl get services -n gpsd
 	minikube service gpsd-nginx-service -n gpsd
 
-all: build build-image setup run
+all: build build-image push-image setup run
 
 clean:
 	kubectl delete all --all -n gpsd || true
