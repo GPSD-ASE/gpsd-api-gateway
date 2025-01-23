@@ -136,4 +136,4 @@ make all
 
 License
 
-This project is yet to be licensed.
+MIT LICENSE.
