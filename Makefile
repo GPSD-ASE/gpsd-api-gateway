@@ -1,10 +1,10 @@
 build-image:
-	docker build -f docker/Dockerfile.api -t paranjik/gpsd-api-gateway:latest .
-	docker build -f docker/Dockerfile.nginx -t paranjik/gpsd-nginx:latest .
+	docker build -f docker/Dockerfile.api -t gpsd/gpsd-api-gateway:latest .
+	docker build -f docker/Dockerfile.nginx -t gpsd/gpsd-nginx:latest .
 
 push-image:
-	docker push paranjik/gpsd-api-gateway:latest
-	docker push paranjik/gpsd-nginx:latest
+	docker push gpsd/gpsd-api-gateway:latest
+	docker push gpsd/gpsd-nginx:latest
 
 run-image:
 	docker run -p 3000:3000 gpsd-api-gateway

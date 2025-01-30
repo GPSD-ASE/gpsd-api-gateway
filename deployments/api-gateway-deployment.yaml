@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: gpsd-api-gateway
-        image: paranjik/gpsd-api-gateway:latest
+        image: gpsd/gpsd-api-gateway:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 3000

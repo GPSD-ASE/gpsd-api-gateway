@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: gpsd-nginx
-        image: paranjik/gpsd-nginx:latest
+        image: gpsd/gpsd-nginx:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 80
