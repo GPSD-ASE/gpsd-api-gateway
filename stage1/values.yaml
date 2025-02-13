@@ -20,6 +20,7 @@ readinessProbe:
   periodSeconds: 10
 
 service:
+  type: NodePort
   port: 443
   targetPort: 3000
   nodePort: 30001

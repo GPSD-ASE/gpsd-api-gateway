@@ -5,9 +5,10 @@ metadata:
   labels:
     app: {{ .Release.Name }}-gpsd-api-gateway
 spec:
-  type: ClusterIP
+  type: {{ .Values.service.type}}
   ports:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.targetPort }}
+      nodePort: {{ .Values.service.nodePort }}
   selector:
     app: {{ .Release.Name }}-gpsd-api-gateway
