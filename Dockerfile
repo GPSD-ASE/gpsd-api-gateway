@@ -1,16 +1,20 @@
-FROM golang:latest
+FROM golang:1.23 AS builder
 
 WORKDIR /app
-
-RUN apt-get update && apt-get install -y curl lsof gcc
 
 COPY go.mod go.sum ./
 RUN go mod tidy
 
 COPY . .
 
-RUN GOARCH=amd64 go build -o api_gateway ./internal/cmd
+# Set architecture to match container's OS
+RUN GOOS=linux GOARCH=amd64 go build -o gpsd-api-gateway .
+
+FROM debian:bookworm
+
+WORKDIR /app
+COPY --from=builder /app/gpsd-api-gateway .
 
 EXPOSE 3000
 
-CMD ["./api_gateway"]
+CMD ["./gpsd-api-gateway"]
