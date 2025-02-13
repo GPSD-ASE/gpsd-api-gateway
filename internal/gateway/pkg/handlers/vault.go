@@ -9,7 +9,47 @@ import (
 	"github.com/hashicorp/vault/api"
 )
 
-// Retrieve certificate and key from Vault.
+/*
+WriteCertificateAndKey writes the certificate and key to temporary files
+and returns the file paths for further use. The temporary files will be deleted
+when the function exits.
+*/
+func WriteCertificateAndKey(cert tls.Certificate) (string, string, error) {
+	certFile, err := os.CreateTemp("", "cert.pem")
+	if err != nil {
+		return "", "", fmt.Errorf("error creating temp cert file: %w", err)
+	}
+	defer func() {
+		certFile.Close()
+		os.Remove(certFile.Name())
+	}()
+
+	if _, err := certFile.Write(cert.Certificate[0]); err != nil {
+		return "", "", fmt.Errorf("error writing to temp cert file: %w", err)
+	}
+
+	keyFile, err := os.CreateTemp("", "key.pem")
+	if err != nil {
+		return "", "", fmt.Errorf("error creating temp key file: %w", err)
+	}
+	defer func() {
+		keyFile.Close()
+		os.Remove(keyFile.Name())
+	}()
+
+	keyBytes, ok := cert.PrivateKey.([]byte)
+	if !ok {
+		return "", "", fmt.Errorf("error asserting type of private key")
+	}
+
+	if _, err := keyFile.Write(keyBytes); err != nil {
+		return "", "", fmt.Errorf("error writing to temp key file: %w", err)
+	}
+
+	return certFile.Name(), keyFile.Name(), nil
+}
+
+/*	RetrieveCertFromVault retrieves certificate and key from Vault. */
 func RetrieveCertFromVault() (*tls.Certificate, error) {
 	client, err := api.NewClient(&api.Config{
 		Address: "http://localhost:8200",

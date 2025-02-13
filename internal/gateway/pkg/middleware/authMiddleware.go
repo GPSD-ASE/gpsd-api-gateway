@@ -14,7 +14,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// TODO: can validate the JWT token
+		// TODO: Validate the JWT token
 
 		next.ServeHTTP(w, r)
 	})
