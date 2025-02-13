@@ -9,7 +9,7 @@ RUN go mod tidy
 
 COPY . .
 
-RUN go build -o api_gateway ./internal/cmd
+RUN GOARCH=amd64 go build -o api_gateway ./internal/cmd
 
 EXPOSE 3000
 
