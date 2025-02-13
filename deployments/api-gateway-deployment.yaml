@@ -21,6 +21,10 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
+        volumeMounts:
+        - name: certs
+          mountPath: "/etc/ssl/certs"
+          readOnly: true
         env:
         - name: NODE_ENV
           value: "staging"
@@ -36,4 +40,12 @@ spec:
             secretKeyRef:
               name: gpsd-api-gateway-secrets
               key: REFRESH_SECRET
-
+      volumes:
+        - name: certs
+          secret:
+            secretName: gpsd-api-gateway-certificates
+            items:
+              - key: tls.crt
+                path: api.gpsd.gateway.com.crt
+              - key: tls.key
+                path: api.gpsd.gateway.com.key
