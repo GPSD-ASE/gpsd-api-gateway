@@ -34,3 +34,8 @@ spec:
               value: "{{ .Values.env.VAULT_AUTH_METHOD }}"
             - name: VAULT_ROLE
               value: "{{ .Values.env.VAULT_ROLE }}"
+            - name: VAULT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: vault-token-secret
+                  key: VAULT_TOKEN
