@@ -12,6 +12,7 @@ import (
 )
 
 func main() {
+	log.Println("Starting API gateway...")
 	cert, err := handlers.RetrieveCertFromVault()
 	if err != nil {
 		log.Fatalf("Error retrieving certificates from Vault: %v", err)
