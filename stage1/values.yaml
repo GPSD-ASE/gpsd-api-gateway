@@ -34,8 +34,14 @@ ingress:
         - path: /
           pathType: Prefix
 
+env:
+  VAULT_ADDR: "https://152.53.124.121:8200"
+  VAULT_AUTH_METHOD: "kubernetes"
+  VAULT_ROLE: "gpsd-api-gateway"
+
 serviceAccount:
-  create: false
+  create: true
+  name: gpsd-api-gateway-sa
 
 resources: {}
 

@@ -1,10 +1,10 @@
 all: build build-image push-image setup run
 
 build-image:
-	docker build -f Dockerfile -t gpsd/gpsd-api-gateway:latest .
+	docker build -f Dockerfile -t gpsd/gpsd-api-gateway:v1 .
 
 push-image:
-	docker push gpsd/gpsd-api-gateway:latest
+	docker push gpsd/gpsd-api-gateway:v1
 
 run-image:
 	docker run -p 3000:3000 gpsd-api-gateway

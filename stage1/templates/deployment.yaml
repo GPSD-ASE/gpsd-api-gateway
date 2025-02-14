@@ -14,6 +14,7 @@ spec:
       labels:
         app: {{ .Release.Name }}-gpsd-api-gateway
     spec:
+      serviceAccountName: {{ .Release.Name }}-sa
       containers:
         - name: gpsd-api-gateway
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -26,3 +27,10 @@ spec:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          env:
+          - name: VAULT_ADDR
+            value: "{{ .Values.env.VAULT_ADDR }}"
+          - name: VAULT_AUTH_METHOD
+            value: "{{ .Values.env.VAULT_AUTH_METHOD }}"
+          - name: VAULT_ROLE
+            value: "{{ .Values.env.VAULT_ROLE }}"
