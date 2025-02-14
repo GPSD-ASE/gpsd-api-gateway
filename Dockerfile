@@ -7,8 +7,7 @@ RUN go mod tidy
 
 COPY . .
 
-# Set architecture to match container's OS
-RUN go build -o gpsd-api-gateway .
+RUN go build -o gpsd-api-gateway ./internal
 
 FROM debian:bookworm
 
