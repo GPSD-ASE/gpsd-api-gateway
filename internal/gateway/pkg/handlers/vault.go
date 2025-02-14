@@ -51,14 +51,23 @@ func WriteCertificateAndKey(cert tls.Certificate) (string, string, error) {
 
 /*	RetrieveCertFromVault retrieves certificate and key from Vault. */
 func RetrieveCertFromVault() (*tls.Certificate, error) {
+	vaultAddr := os.Getenv("VAULT_ADDR")
+	if vaultAddr == "" {
+		return nil, fmt.Errorf("VAULT_ADDR is not set.")
+	}
+
 	client, err := api.NewClient(&api.Config{
-		Address: "http://localhost:8200",
+		Address: vaultAddr,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("unable to create Vault client: %v", err)
 	}
 
-	client.SetToken(os.Getenv("VAULT_TOKEN"))
+	vaultToken := os.Getenv("VAULT_TOKEN")
+	if vaultToken == "" {
+		return nil, fmt.Errorf("VAULT_TOKEN is not set.")
+	}
+	client.SetToken(vaultToken)
 
 	// Fetch the certificate and key from Vault.
 	secret, err := client.KVv2("secret").Get(context.Background(), "api-gateway/cert")
