@@ -39,10 +39,16 @@ func WriteCertificateAndKey(cert tls.Certificate) (string, string, error) {
 		os.Remove(keyFile.Name())
 	}()
 
-	keyBytes, ok := cert.PrivateKey.([]byte)
-	if !ok {
-		fmt.Printf("ERROR: Unexpected key type: %T\n", cert.PrivateKey)
-		return "", "", fmt.Errorf("Error asserting type of private key.")
+	var keyPEM []byte
+	switch key := cert.PrivateKey.(type) {
+	case *rsa.PrivateKey:
+		keyPEM = pem.EncodeToMemory(&pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(key)})
+	default:
+		return "", "", fmt.Errorf("Unsupported private key type: %T", cert.PrivateKey)
+	}
+
+	if _, err := keyFile.Write(keyPEM); err != nil {
+		return "", "", fmt.Errorf("Error writing to temp key file: %w", err)
 	}
 
 	if _, err := keyFile.Write(keyBytes); err != nil {
@@ -57,7 +63,7 @@ func RetrieveCertFromVault() (*tls.Certificate, error) {
 	// Load the vault CA certificate.
 	caCert, err := os.ReadFile("/etc/ssl/certs/vault.pem")
 	if err != nil {
-		return nil, fmt.Errorf("unable to read custom CA certificate: %v", err)
+		return nil, fmt.Errorf("Unable to read custom CA certificate: %v", err)
 	}
 
 	// Create a certificate pool and add the vault CA.
@@ -81,7 +87,7 @@ func RetrieveCertFromVault() (*tls.Certificate, error) {
 		},
 	})
 	if err != nil {
-		return nil, fmt.Errorf("unable to create Vault client: %v", err)
+		return nil, fmt.Errorf("Unable to create Vault client: %v", err)
 	}
 
 	vaultToken := os.Getenv("VAULT_TOKEN")
@@ -93,7 +99,7 @@ func RetrieveCertFromVault() (*tls.Certificate, error) {
 	// Fetch the certificate and key from Vault.
 	secret, err := client.KVv2("secret").Get(context.Background(), "api-gateway/cert")
 	if err != nil {
-		return nil, fmt.Errorf("unable to read secret from Vault: %v", err)
+		return nil, fmt.Errorf("Unable to read secret from Vault: %v", err)
 	}
 
 	// Retrieve the certificate and key data.
@@ -103,7 +109,7 @@ func RetrieveCertFromVault() (*tls.Certificate, error) {
 	// Create the TLS certificate from PEM data.
 	cert, err := tls.X509KeyPair(certPEM, keyPEM)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse certificate and key: %v", err)
+		return nil, fmt.Errorf("Failed to parse certificate and key: %v", err)
 	}
 
 	return &cert, nil

@@ -1,3 +1,5 @@
+develop: build-image push-image helm
+
 all: build build-image push-image setup run
 
 build-image:
@@ -29,6 +31,12 @@ run:
 	sleep 5
 	kubectl get pods -n gpsd
 	kubectl get services -n gpsd
+
+helm:
+	helm upgrade --install demo ./stage1 --set image.tag=v1 --namespace gpsd
+
+helm-uninstall:
+	helm uninstall demo -n gpsd
 
 clean:
 	kubectl delete all --all -n gpsd || true
