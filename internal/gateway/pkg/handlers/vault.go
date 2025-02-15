@@ -3,8 +3,10 @@ package handlers
 import (
 	"context"
 	"crypto/tls"
+	"crypto/x509"
 	"fmt"
 	"os"
+	"net/http"
 
 	"github.com/hashicorp/vault/api"
 )
