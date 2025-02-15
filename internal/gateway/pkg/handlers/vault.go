@@ -19,7 +19,7 @@ when the function exits.
 func WriteCertificateAndKey(cert tls.Certificate) (string, string, error) {
 	certFile, err := os.CreateTemp("", "cert.pem")
 	if err != nil {
-		return "", "", fmt.Errorf("error creating temp cert file: %w", err)
+		return "", "", fmt.Errorf("Error creating temp cert file: %w", err)
 	}
 	defer func() {
 		certFile.Close()
@@ -27,12 +27,12 @@ func WriteCertificateAndKey(cert tls.Certificate) (string, string, error) {
 	}()
 
 	if _, err := certFile.Write(cert.Certificate[0]); err != nil {
-		return "", "", fmt.Errorf("error writing to temp cert file: %w", err)
+		return "", "", fmt.Errorf("Error writing to temp cert file: %w", err)
 	}
 
 	keyFile, err := os.CreateTemp("", "key.pem")
 	if err != nil {
-		return "", "", fmt.Errorf("error creating temp key file: %w", err)
+		return "", "", fmt.Errorf("Error creating temp key file: %w", err)
 	}
 	defer func() {
 		keyFile.Close()
@@ -41,11 +41,12 @@ func WriteCertificateAndKey(cert tls.Certificate) (string, string, error) {
 
 	keyBytes, ok := cert.PrivateKey.([]byte)
 	if !ok {
-		return "", "", fmt.Errorf("error asserting type of private key")
+		fmt.Printf("ERROR: Unexpected key type: %T\n", cert.PrivateKey)
+		return "", "", fmt.Errorf("Error asserting type of private key.")
 	}
 
 	if _, err := keyFile.Write(keyBytes); err != nil {
-		return "", "", fmt.Errorf("error writing to temp key file: %w", err)
+		return "", "", fmt.Errorf("Error writing to temp key file: %w", err)
 	}
 
 	return certFile.Name(), keyFile.Name(), nil
