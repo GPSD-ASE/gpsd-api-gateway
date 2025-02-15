@@ -51,6 +51,17 @@ func WriteCertificateAndKey(cert tls.Certificate) (string, string, error) {
 
 /*	RetrieveCertFromVault retrieves certificate and key from Vault. */
 func RetrieveCertFromVault() (*tls.Certificate, error) {
+	// Load the vault CA certificate.
+	caCert, err := os.ReadFile("/etc/ssl/certs/vault.pem")
+	if err != nil {
+		return nil, fmt.Errorf("unable to read custom CA certificate: %v", err)
+	}
+
+	// Create a certificate pool and add the vault CA.
+	caCertPool := x509.NewCertPool()
+	caCertPool.AppendCertsFromPEM(caCert)
+
+	
 	vaultAddr := os.Getenv("VAULT_ADDR")
 	if vaultAddr == "" {
 		return nil, fmt.Errorf("VAULT_ADDR is not set.")
@@ -58,6 +69,13 @@ func RetrieveCertFromVault() (*tls.Certificate, error) {
 
 	client, err := api.NewClient(&api.Config{
 		Address: vaultAddr,
+		HttpClient: &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{
+					RootCAs: caCertPool,
+				},
+			},
+		},
 	})
 	if err != nil {
 		return nil, fmt.Errorf("unable to create Vault client: %v", err)

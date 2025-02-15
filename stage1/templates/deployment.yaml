@@ -39,3 +39,12 @@ spec:
                 secretKeyRef:
                   name: vault-token-secret
                   key: VAULT_TOKEN
+          volumeMounts:
+            - name: vault-ca-cert
+              mountPath: /etc/ssl/certs/vault.pem
+              subPath: vault.pem
+              readOnly: true
+      volumes:
+        - name: vault-ca-cert
+          configMap:
+            name: vault-ca-cert
