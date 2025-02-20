@@ -5,10 +5,17 @@ metadata:
   labels:
     app: {{ .Release.Name }}-gpsd-api-gateway
 spec:
-  type: {{ .Values.service.type}}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: {{ .Values.service.targetPort }}
-      nodePort: {{ .Values.service.nodePort }}
+    {{- range .Values.service }}
+    - name: {{ .name | default "http" }}
+      port: {{ .port }}
+      targetPort: {{ .targetPort }}
+      {{- if .nodePort }}
+      nodePort: {{ .nodePort }}
+      {{- end }}
+    {{- end }}
   selector:
     app: {{ .Release.Name }}-gpsd-api-gateway
+  {{- with .Values.service | first }}
+  type: {{ .type | default "ClusterIP" }}
+  {{- end }}

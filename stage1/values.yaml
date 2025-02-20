@@ -1,3 +1,5 @@
+namespace: gpsd
+
 replicaCount: 1
 
 image:
@@ -8,22 +10,27 @@ image:
 livenessProbe:
   httpGet:
     path: /health
-    port: 3000
+    port: 3005
   initialDelaySeconds: 3
   periodSeconds: 10
 
 readinessProbe:
   httpGet:
     path: /ready
-    port: 3000
+    port: 3005
   initialDelaySeconds: 3
   periodSeconds: 10
 
 service:
-  type: NodePort
-  port: 443
-  targetPort: 3000
-  nodePort: 30001
+  - name: https
+    type: NodePort
+    port: 443
+    targetPort: 3000
+    nodePort: 30000
+  - name: http
+    type: ClusterIP
+    port: 3005
+    targetPort: 3005
 
 ingress:
   enabled: false

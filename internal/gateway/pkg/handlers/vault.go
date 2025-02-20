@@ -2,8 +2,10 @@ package handlers
 
 import (
 	"context"
+	"crypto/rsa"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/pem"
 	"fmt"
 	"os"
 	"net/http"
@@ -21,10 +23,6 @@ func WriteCertificateAndKey(cert tls.Certificate) (string, string, error) {
 	if err != nil {
 		return "", "", fmt.Errorf("Error creating temp cert file: %w", err)
 	}
-	defer func() {
-		certFile.Close()
-		os.Remove(certFile.Name())
-	}()
 
 	if _, err := certFile.Write(cert.Certificate[0]); err != nil {
 		return "", "", fmt.Errorf("Error writing to temp cert file: %w", err)
@@ -34,10 +32,6 @@ func WriteCertificateAndKey(cert tls.Certificate) (string, string, error) {
 	if err != nil {
 		return "", "", fmt.Errorf("Error creating temp key file: %w", err)
 	}
-	defer func() {
-		keyFile.Close()
-		os.Remove(keyFile.Name())
-	}()
 
 	var keyPEM []byte
 	switch key := cert.PrivateKey.(type) {
@@ -48,10 +42,6 @@ func WriteCertificateAndKey(cert tls.Certificate) (string, string, error) {
 	}
 
 	if _, err := keyFile.Write(keyPEM); err != nil {
-		return "", "", fmt.Errorf("Error writing to temp key file: %w", err)
-	}
-
-	if _, err := keyFile.Write(keyBytes); err != nil {
 		return "", "", fmt.Errorf("Error writing to temp key file: %w", err)
 	}
 
@@ -105,6 +95,15 @@ func RetrieveCertFromVault() (*tls.Certificate, error) {
 	// Retrieve the certificate and key data.
 	certPEM := []byte(secret.Data["cert"].(string))
 	keyPEM := []byte(secret.Data["key"].(string))
+
+	// Validate PEM format.
+	if _, rest := pem.Decode([]byte(certPEM)); len(rest) > 0 {
+		return nil, fmt.Errorf("invalid certificate PEM format")
+	}
+
+	if _, rest := pem.Decode([]byte(keyPEM)); len(rest) > 0 {
+		return nil, fmt.Errorf("invalid key PEM format")
+	}
 
 	// Create the TLS certificate from PEM data.
 	cert, err := tls.X509KeyPair(certPEM, keyPEM)

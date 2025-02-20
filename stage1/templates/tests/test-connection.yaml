@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "gpsd-api-gateway.fullname" . }}:{{ .Values.service.port }}']
+      args: ['{{ include "gpsd-api-gateway.fullname" . }}:{{ index .Values.service 0 "port" }}']
   restartPolicy: Never

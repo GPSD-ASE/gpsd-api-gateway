@@ -11,30 +11,54 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func main() {
-	log.Println("Starting API gateway...")
+// Start HTTPS Server for handling external requests.
+func startHTTPSServer() {
 	cert, err := handlers.RetrieveCertFromVault()
 	if err != nil {
 		log.Fatalf("Error retrieving certificates from Vault: %v", err)
 	}
 
-	server := &http.Server{
-		Addr:    ":3000",
-		Handler: mux.NewRouter(),
-		TLSConfig: &tls.Config{
-			MinVersion: tls.VersionTLS13,
-		},
-	}
-
 	r := mux.NewRouter()
 	routes.RegisterRoutes(r)
 
-	certFile, keyFile, err := handlers.WriteCertificateAndKey(*cert)
-	if err != nil {
-		log.Fatalf("Error creating temp key cert file: %w", err)
+	server := &http.Server{
+		Addr:    ":3000",
+		Handler: r,
+		TLSConfig: &tls.Config{
+			MinVersion: tls.VersionTLS13,
+			Certificates: []tls.Certificate{*cert},
+		},
 	}
 
-	// Start the server with the certificate loaded from Vault.
-	log.Println("API Gateway running on https://localhost:3000")
-	log.Fatal(server.ListenAndServeTLS(certFile, keyFile))
+	log.Println("HTTPS Server for API Gateway running on https://0.0.0.0:3000.")
+	err = server.ListenAndServeTLS("", "")
+	if err != nil {
+		log.Fatalf("HTTPS server error: %v", err)
+	}
+}
+
+// Start HTTP Server for k3s health checks only.
+func startHTTPServer() {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/health", handlers.HealthCheckHandler)
+	mux.HandleFunc("/ready", handlers.HealthCheckHandler)
+
+	server := &http.Server{
+		Addr:    ":3005",
+		Handler: mux,
+	}
+
+	log.Println("HTTP Health Check Server for API Gateway running on http://0.0.0.0:3005.")
+	err := server.ListenAndServe()
+	if err != nil {
+		log.Fatal("HTTP server error:", err)
+	}
+}
+
+
+func main() {
+	log.Println("Starting API gateway...")
+
+	go startHTTPServer()
+	startHTTPSServer()
 }

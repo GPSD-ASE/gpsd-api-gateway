@@ -11,6 +11,11 @@ type Credentials struct {
 	Password string `json:"password"`
 }
 
+func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "Register Now!")
+}
+
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var creds Credentials
 	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
@@ -31,11 +36,5 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: Invalidate the JWT token.
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "Logged out successfully")
-}
-
-func RefreshHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO: Generate a new JWT token based on the refresh token.
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "Token refreshed")
+	fmt.Fprintf(w, "Logged out successfully!")
 }

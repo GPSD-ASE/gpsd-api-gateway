@@ -12,6 +12,9 @@ RUN go build -o gpsd-api-gateway ./internal
 FROM debian:bookworm
 
 WORKDIR /app
+
+RUN apt-get update && apt-get install -y curl lsof net-tools ca-certificates libc6
+
 COPY --from=builder /app/gpsd-api-gateway .
 
 EXPOSE 3000
