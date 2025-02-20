@@ -3,9 +3,10 @@ DEPLOYMENT = gpsd-api-gateway
 IMAGE_NAME = $(NAMESPACE)/$(DEPLOYMENT)
 TAG ?= latest  # If no tag is provided, default to 'latest'
 
+# Use `make develop` for local testing
 develop: helm-uninstall build-image push-image helm
 
-all: build build-image push-image setup run
+docker: build-image push-image
 
 build-image:
 	docker build -f Dockerfile -t $(IMAGE_NAME):$(TAG) .
