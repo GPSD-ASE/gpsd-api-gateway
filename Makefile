@@ -1,7 +1,9 @@
+TAG ?= latest  # If no tag is provided, default to 'latest'
 NAMESPACE = gpsd
 DEPLOYMENT = gpsd-api-gateway
 IMAGE_NAME = $(NAMESPACE)/$(DEPLOYMENT)
-TAG ?= latest  # If no tag is provided, default to 'latest'
+LOCAL_CHART_NAME = helm
+REMOTE_CHART_REPOSITORY = gpsd-ase.github.io
 SERVICE_NAME = $(DEPLOYMENT)
 
 # Use `make develop` for local testing
@@ -44,23 +46,18 @@ deploy-gh-pages: gh-pages-publish helm-repo-update
 
 gh-pages-publish:
 	@echo "Publishing Helm chart for $(SERVICE_NAME) to GitHub Pages..."
+	rm -rf /tmp/gpsd-api-gateway-0.1.0.tgz /tmp/index.yaml
+	helm package ./$(LOCAL_CHART_NAME) -d /tmp
+	helm repo index . --url https://$(REMOTE_CHART_REPOSITORY)/$(SERVICE_NAME)/ --merge /tmp/index.yaml
 	git checkout gh-pages
-	git rm -rf .
-	git checkout HEAD -- helm
-	git commit --allow-empty -m "fix: commit to update GitHub Pages"
+	cp  /tmp/$(SERVICE_NAME)-0.1.0.tgz /tmp/index.yaml .
+	git commit -m "fix: commit to update GitHub Pages"
 	git push origin gh-pages -f
-	cd helm/
-	helm package .
-	helm repo index . --url https://gpsd-ase.github.io/$(SERVICE_NAME)/ --merge index.yaml
-	cd ..
-	mv helm/$(SERVICE_NAME)-0.1.0.tgz helm/index.yaml .
-	git rm -rf helm
-	git add .
-	git commit -m "fix: Publish Helm chart"
-	git push origin gh-pages -f
+	sleep 2
+	curl -k https://$(REMOTE_CHART_REPOSITORY)/$(SERVICE_NAME)/index.yaml
 
 helm-repo-update:
 	@echo "Adding and updating Helm repo for $(SERVICE_NAME)..."
-	helm repo add $(SERVICE_NAME) https://gpsd-ase.github.io/$(SERVICE_NAME)/
+	helm repo add $(SERVICE_NAME) https://$(REMOTE_CHART_REPOSITORY)/$(SERVICE_NAME)/
 	helm repo update
 	helm repo list
