@@ -48,7 +48,7 @@ gh-pages-publish:
 	@echo "Publishing Helm chart for $(SERVICE_NAME) to GitHub Pages..."
 	rm -rf /tmp/gpsd-api-gateway-0.1.0.tgz /tmp/index.yaml
 	helm package ./$(LOCAL_CHART_NAME) -d /tmp
-	helm repo index . --url https://$(REMOTE_CHART_REPOSITORY)/$(SERVICE_NAME)/ --merge /tmp/index.yaml
+	helm repo index /tmp --url https://$(REMOTE_CHART_REPOSITORY)/$(SERVICE_NAME)/ --merge /tmp/index.yaml
 	git checkout gh-pages
 	cp  /tmp/$(SERVICE_NAME)-0.1.0.tgz /tmp/index.yaml .
 	git commit -m "fix: commit to update GitHub Pages"
