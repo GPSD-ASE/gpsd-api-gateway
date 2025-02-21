@@ -6,8 +6,8 @@ import (
 )
 
 type Response struct {
-	Message string `json:"message"`
-	AccessToken string `json:accessToken,omitempty`
+	Message     string `json:"message"`
+	AccessToken string `json:"accessToken,omitempty"`
 }
 
 type LoginRequest struct {
