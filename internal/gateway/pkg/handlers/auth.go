@@ -2,39 +2,60 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
-type Credentials struct {
+type Response struct {
+	Message string `json:"message"`
+	AccessToken string `json:accessToken,omitempty`
+}
+
+type LoginRequest struct {
 	Username string `json:"username"`
-	Password string `json:"password"`
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "Register Now!")
+	response := Response{Message: "Register now as User! Work in progress."}
+	json.NewEncoder(w).Encode(response)
+}
+
+func RegisterAdminHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	response := Response{Message: "Register Now as Admin! Work in progress."}
+	json.NewEncoder(w).Encode(response)
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	var creds Credentials
-	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
-		http.Error(w, "Invalid input", http.StatusBadRequest)
-		return
+	w.Header().Set("Content-Type", "application/json")
+
+	var loginRequest LoginRequest
+	err := json.NewDecoder(r.Body).Decode(&loginRequest)
+	if err != nil {
+		response := Response{Message: "Invalid JSON payload from user."}
+		w.WriteHeader(http.StatusBadRequest)
+		goto out
 	}
 
-	// TODO: Perform authentication (JWT creation or other logic here).
-	if creds.Username == "admin" && creds.Password == "password" {
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "Login successful")
-		return
+	if loginRequest.Username == "user1" {
+		http.Error(w, "Login forbidden!", http.StatusForbidden)
+		response := Response{Message: "Login forbidden!"}
+		w.WriteHeader(http.StatusForbidden)
+		goto out
 	}
 
-	http.Error(w, "Invalid credentials", http.StatusUnauthorized)
+	response := Response{Message: "Login is successful."}
+	w.WriteHeader(http.StatusOK)
+
+out:
+	json.NewEncoder(w).Encode(response)
 }
 
-func LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO: Invalidate the JWT token.
+func VerifyHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "Logged out successfully!")
+	response := Response{Message: "Token verification is successful."}
+	json.NewEncoder(w).Encode(response)
 }
