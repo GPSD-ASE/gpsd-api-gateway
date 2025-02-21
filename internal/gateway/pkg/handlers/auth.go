@@ -46,7 +46,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		goto out
 	}
 
-	response = Response{Message: "Login is successful.", AccessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEwIiwidXNlcm5hbWUiOiJEdW1teSIsInJvbGUiOiIxIn0.isgyco7Uq5J4N-QIFW3RJ_JM7eD4WMAJoqDh0bxVrYo "}
+	response = Response{Message: "Login API is successful.", AccessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEwIiwidXNlcm5hbWUiOiJEdW1teSIsInJvbGUiOiIxIn0.isgyco7Uq5J4N-QIFW3RJ_JM7eD4WMAJoqDh0bxVrYo "}
 	w.WriteHeader(http.StatusOK)
 
 out:
