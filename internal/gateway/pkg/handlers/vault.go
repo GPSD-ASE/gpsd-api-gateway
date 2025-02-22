@@ -86,7 +86,7 @@ func RetrieveCertFromVault() (*tls.Certificate, error) {
 	client.SetToken(vaultToken)
 
 	// Fetch the certificate and key from Vault.
-	secret, err := client.KVv2("secret").Get(context.Background(), "api-gateway/cert")
+	secret, err := client.KVv2("secret").Get(context.Background(), "gpsd/api-gateway/cert")
 	if err != nil {
 		return nil, fmt.Errorf("unable to read secret from Vault: %v", err)
 	}
