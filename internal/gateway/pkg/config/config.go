@@ -62,14 +62,15 @@ func LoadConfig() *Config {
 		IncidentMgmtPort: findServiceEnvVar(envs, "INCIDENT_MGMT", "SERVICE_PORT"),
 	}
 
+	// TODO: Change this to log.Fatal once all deployments are updated.
 	if cfg.UserMgmtHost == "" || cfg.UserMgmtPort == "" {
-		log.Fatal("User Management service environment variables not found")
+		log.Print("User Management service environment variables not found")
 	}
 	if cfg.MapMgmtHost == "" || cfg.MapMgmtPort == "" {
-		log.Fatal("Map Management service environment variables not found")
+		log.Print("Map Management service environment variables not found")
 	}
 	if cfg.IncidentMgmtHost == "" || cfg.IncidentMgmtPort == "" {
-		log.Fatal("Incident Management service environment variables not found")
+		log.Print("Incident Management service environment variables not found")
 	}
 
 	return cfg

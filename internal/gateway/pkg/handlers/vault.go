@@ -92,8 +92,8 @@ func RetrieveCertFromVault() (*tls.Certificate, error) {
 	}
 
 	// Retrieve the certificate and key data.
-	certPEM := []byte(secret.Data["cert"].(string))
-	keyPEM := []byte(secret.Data["key"].(string))
+	certPEM := []byte(secret.Data["certificate"].(string))
+	keyPEM := []byte(secret.Data["private_key"].(string))
 
 	// Validate PEM format.
 	if _, rest := pem.Decode([]byte(certPEM)); len(rest) > 0 {
