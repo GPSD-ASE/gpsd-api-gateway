@@ -44,14 +44,12 @@ func checkVaultHealth(vaultAddr string) *VaultHealth {
 
 // HealthCheckHandler for HTTP-only endpoints.
 func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
-	cfg := config.LoadConfig()
-
 	response := HealthResponse{
 		Status:    "ok",
 		Timestamp: time.Now().UTC().Format(time.RFC3339),
 	}
 
-	vaultHealth := checkVaultHealth(cfg.VaultAddr)
+	vaultHealth := checkVaultHealth(config.ApiGatewayConfig.VaultAddr)
 	if vaultHealth.Error != "" || vaultHealth.Sealed {
 		response.Status = "degraded"
 	}

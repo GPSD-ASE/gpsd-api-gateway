@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+var ApiGatewayConfig *Config
+
 type Config struct {
 	VaultAddr        string
 	VaultAuth        string
@@ -42,10 +44,8 @@ func findServiceEnvVar(envs []string, service, field string) string {
 	return ""
 }
 
-func LoadConfig() *Config {
-	envs := os.Environ()
-
-	cfg := &Config{
+func LoadConfig(envs []string) {
+	ApiGatewayConfig = &Config{
 		// Non-service configs remain the same
 		VaultAddr:  getEnv("VAULT_ADDR", "http://127.0.0.1:8200"),
 		VaultAuth:  getEnv("VAULT_AUTH_METHOD", "token"),
@@ -63,17 +63,15 @@ func LoadConfig() *Config {
 	}
 
 	// TODO: Change this to log.Fatal once all deployments are updated.
-	if cfg.UserMgmtHost == "" || cfg.UserMgmtPort == "" {
+	if ApiGatewayConfig.UserMgmtHost == "" || ApiGatewayConfig.UserMgmtPort == "" {
 		log.Print("User Management service environment variables not found")
 	}
-	if cfg.MapMgmtHost == "" || cfg.MapMgmtPort == "" {
+	if ApiGatewayConfig.MapMgmtHost == "" || ApiGatewayConfig.MapMgmtPort == "" {
 		log.Print("Map Management service environment variables not found")
 	}
-	if cfg.IncidentMgmtHost == "" || cfg.IncidentMgmtPort == "" {
+	if ApiGatewayConfig.IncidentMgmtHost == "" || ApiGatewayConfig.IncidentMgmtPort == "" {
 		log.Print("Incident Management service environment variables not found")
 	}
-
-	return cfg
 }
 
 func getEnv(key, defaultValue string) string {

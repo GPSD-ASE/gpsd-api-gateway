@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"log"
 	"net/http"
+	"os"
 
 	"gpsd-api-gateway/internal/gateway/pkg/config"
 	"gpsd-api-gateway/internal/gateway/pkg/handlers"
@@ -11,8 +12,6 @@ import (
 
 	"github.com/gorilla/mux"
 )
-
-var cfg = config.LoadConfig()
 
 // Start HTTPS Server for handling external requests.
 func startHTTPSServer() {
@@ -61,7 +60,10 @@ func startHTTPServer() {
 func main() {
 	log.Println("Starting API gateway...")
 
-	log.Printf("Vault is running at %s.", cfg.VaultAddr)
+	envs := os.Environ()
+	config.LoadConfig(envs)
+
+	log.Printf("Vault is running at %s.", config.ApiGatewayConfig.VaultAddr)
 
 	go startHTTPServer()
 	startHTTPSServer()
