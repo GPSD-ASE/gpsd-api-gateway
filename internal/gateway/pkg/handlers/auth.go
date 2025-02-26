@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"gpsd-api-gateway/internal/gateway/pkg/config"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 var client = &http.Client{
@@ -115,13 +117,68 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	forwardRequest(w, r, "/signin", nil)
 }
 
-func VerifyHandler(w http.ResponseWriter, r *http.Request) {
-	token := r.Header.Get("Authorization")
-	if token == "" {
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(ErrorResponse{Error: "No token provided"})
-		return
+// TODO: Remove this from gpsd-api-gateway, only temporary
+var secretKey = []byte("secret key")
+
+func VerifyToken(tokenString string) (bool, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return secretKey, nil
+	})
+
+	if err != nil {
+		return false, err
 	}
 
-	forwardRequest(w, r, "/verify", nil)
+	if !token.Valid {
+		return false, fmt.Errorf("invalid token")
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return false, fmt.Errorf("invalid token claims")
+	}
+
+	exp, ok := claims["exp"].(float64)
+	if !ok {
+		return false, fmt.Errorf("invalid expiration claim")
+	}
+
+	if time.Now().Unix() > int64(exp) {
+		return false, fmt.Errorf("token expired")
+	}
+
+	username, ok := claims["username"].(string)
+	if !ok {
+		return false, fmt.Errorf("invalid username claim")
+	}
+
+	return true, nil
+}
+
+func VerifyHandler(w http.ResponseWriter, r *http.Request) {
+	valid := false
+	token := r.Header.Get("Authorization")
+	if token == "" {
+		json.NewEncoder(w).Encode(ErrorResponse{Error: "No token provided"})
+		goto out
+	}
+
+	valid, err := VerifyToken(token)
+	if err != nil {
+		json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+		goto out
+	}
+
+out:
+	w.Header().Set("Content-Type", "application/json")
+
+	if valid {
+		w.WriteHeader(http.StatusOK)
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+	}
+
+	json.NewEncoder(w).Encode(response)
+
+	// forwardRequest(w, r, "/verify", nil)
 }
