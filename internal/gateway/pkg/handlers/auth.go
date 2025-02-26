@@ -152,37 +152,37 @@ func VerifyToken(tokenString string) (bool, error) {
 }
 
 func VerifyHandler(w http.ResponseWriter, r *http.Request) {
-	var err error
-	var token string = ""
-	var valid bool = false
+	w.Header().Set("Content-Type", "application/json")
 
 	authHeader := r.Header.Get("Authorization")
 	if authHeader == "" {
+		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(ErrorResponse{Error: "no token provided"})
-		goto out
+		return
 	}
 
+	token := ""
 	if len(authHeader) > 7 && strings.HasPrefix(authHeader, "Bearer ") {
 		token = authHeader[7:]
 	} else {
-		json.NewEncoder(w).Encode(ErrorResponse{Error: "invalid authorization format"})
-		goto out
-	}
-
-	valid, err = VerifyToken(token)
-	if err != nil {
-		json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
-		goto out
-	}
-
-out:
-	w.Header().Set("Content-Type", "application/json")
-
-	if valid {
-		w.WriteHeader(http.StatusOK)
-	} else {
 		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(ErrorResponse{Error: "invalid authorization format"})
+		return
 	}
 
-	// forwardRequest(w, r, "/verify", nil)
+	valid, err := VerifyToken(token)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+		return
+	}
+
+	if !valid {
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]bool{"valid": false})
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]bool{"valid": true})
 }
