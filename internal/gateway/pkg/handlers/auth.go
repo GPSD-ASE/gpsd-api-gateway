@@ -118,7 +118,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // TODO: Remove this from gpsd-api-gateway, only temporary
-var secretKey = []byte("secret key")
+var secretKey = []byte("a-string-secret-at-least-256-bits-long")
 
 func VerifyToken(tokenString string) (bool, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
