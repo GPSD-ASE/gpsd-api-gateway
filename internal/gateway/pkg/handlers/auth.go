@@ -147,23 +147,20 @@ func VerifyToken(tokenString string) (bool, error) {
 		return false, fmt.Errorf("token expired")
 	}
 
-	username, ok := claims["username"].(string)
-	if !ok {
-		return false, fmt.Errorf("invalid username claim")
-	}
-
 	return true, nil
 }
 
 func VerifyHandler(w http.ResponseWriter, r *http.Request) {
-	valid := false
+	var err error
+	var valid bool = false
+
 	token := r.Header.Get("Authorization")
 	if token == "" {
 		json.NewEncoder(w).Encode(ErrorResponse{Error: "No token provided"})
 		goto out
 	}
 
-	valid, err := VerifyToken(token)
+	valid, err = VerifyToken(token)
 	if err != nil {
 		json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
 		goto out
@@ -177,8 +174,6 @@ out:
 	} else {
 		w.WriteHeader(http.StatusUnauthorized)
 	}
-
-	json.NewEncoder(w).Encode(response)
 
 	// forwardRequest(w, r, "/verify", nil)
 }
