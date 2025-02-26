@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	"gpsd-api-gateway/internal/gateway/pkg/config"
@@ -152,11 +153,19 @@ func VerifyToken(tokenString string) (bool, error) {
 
 func VerifyHandler(w http.ResponseWriter, r *http.Request) {
 	var err error
+	var token string = ""
 	var valid bool = false
 
-	token := r.Header.Get("Authorization")
-	if token == "" {
-		json.NewEncoder(w).Encode(ErrorResponse{Error: "No token provided"})
+	authHeader := r.Header.Get("Authorization")
+	if authHeader == "" {
+		json.NewEncoder(w).Encode(ErrorResponse{Error: "no token provided"})
+		goto out
+	}
+
+	if len(authHeader) > 7 && strings.HasPrefix(authHeader, "Bearer ") {
+		token = authHeader[7:]
+	} else {
+		json.NewEncoder(w).Encode(ErrorResponse{Error: "invalid authorization format"})
 		goto out
 	}
 
