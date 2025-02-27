@@ -46,33 +46,34 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // TODO: Remove this from gpsd-api-gateway, only temporary
-var secretKey = []byte("a-string-secret-at-least-256-bits-long")
+var secretKey = []byte("secret key")
 
 func VerifyToken(tokenString string) (bool, error) {
+	var errStr error = fmt.Errorf("invalid token")
+
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return secretKey, nil
 	})
-
 	if err != nil {
-		return false, err
+		return false, errStr
 	}
 
 	if !token.Valid {
-		return false, fmt.Errorf("invalid token")
+		return false, errStr
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return false, fmt.Errorf("invalid token claims")
+		return false, errStr
 	}
 
 	exp, ok := claims["exp"].(float64)
 	if !ok {
-		return false, fmt.Errorf("invalid expiration claim")
+		return false, errStr
 	}
 
 	if time.Now().Unix() > int64(exp) {
-		return false, fmt.Errorf("token expired")
+		return false, errStr
 	}
 
 	return true, nil
@@ -98,18 +99,12 @@ func VerifyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	valid, err := VerifyToken(token)
-	if err != nil {
+	if !valid || err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
 		return
 	}
 
-	if !valid {
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(map[string]bool{"valid": false})
-		return
-	}
-
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]bool{"valid": true})
+	json.NewEncoder(w).Encode(map[string]string{"message": "valid token"})
 }
