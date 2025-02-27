@@ -4,34 +4,34 @@ The GPSD API Gateway serves as the central entry point for the disaster response
 
 ### Table of Contents
 
-	•	Features
-	•	Architecture
-	•	Project Structure
-	•	Prerequisites
-	•	Setting up Hashicorp Vault
-	•	Environment Variables
-	•	Running Locally
-	•	Building and Running with Docker
-	•	Deploying with Helm
-	•	API Documentation
-	•	Security
-	•	License
+	-	Features
+	-	Architecture
+	-	Project Structure
+	-	Prerequisites
+	-	Setting up Hashicorp Vault
+	-	Environment Variables
+	-	Running Locally
+	-	Building and Running with Docker
+	-	Deploying with Helm
+	-	API Documentation
+	-	Security
+	-	License
 
 ### Features
 
-	•	API Routing: Proxies requests to the appropriate backend services
-	•	Security: TLS encryption with custom certificates
-	•	Configuration: Environment-based configuration system
-	•	Integration with HashiCorp Vault: Secure credential management
+	-	API Routing: Proxies requests to the appropriate backend services
+	-	Security: TLS encryption with custom certificates
+	-	Configuration: Environment-based configuration system
+	-	Integration with HashiCorp Vault: Secure credential management
 
 ### Architecture
 
 The API Gateway connects the following services:
 
-•	User Management Service
-•	Incident Management Service
-•	Map Service
-•	Notification Service (In progress)
+-	User Management Service
+-	Incident Management Service
+-	Map Service
+-	Notification Service (In progress)
 
 ### Project Structure
 
@@ -54,10 +54,10 @@ The API Gateway connects the following services:
 
 ### Prerequisites
 
-•	Go 1.19+
-•	Docker
-•	Kubernetes cluster (for production deployment)
-•	HashiCorp Vault
+-	Go 1.19+
+-	Docker
+-	Kubernetes cluster (for production deployment)
+-	HashiCorp Vault
 
 ### Environment Variables
 
@@ -203,34 +203,34 @@ The API Gateway exposes the following endpoints:
 
 ##### User Management
 
-•	POST /register - User registration
-•	POST /register-admin - Admin registration
-•	POST /login - User login
-•	GET /verify - Token verification
+-	POST /register - User registration
+-	POST /register-admin - Admin registration
+-	POST /login - User login
+-	GET /verify - Token verification
 
 ##### Map Services
 
-•	GET /zones - Get evacuation zones
-•	GET /routing - Get route information
-•	POST /evacuation - Create evacuation plan
-•	GET /traffic - Get traffic information
+-	GET /zones - Get evacuation zones
+-	GET /routing - Get route information
+-	POST /evacuation - Create evacuation plan
+-	GET /traffic - Get traffic information
 
 ##### Incident Management
 
-•	GET /incidents - Get all incidents
-•	POST /incidents - Create a new incident
-•	GET /incidents/{id} - Get incident by ID
-•	DELETE /incidents/{id} - Delete an incident
-•	PATCH /incidents/{id}/status/{status} - Update incident status
+-	GET /incidents - Get all incidents
+-	POST /incidents - Create a new incident
+-	GET /incidents/{id} - Get incident by ID
+-	DELETE /incidents/{id} - Delete an incident
+-	PATCH /incidents/{id}/status/{status} - Update incident status
 
 ### Security
 
 The API Gateway implements several security measures:
 
-•	JWT Authentication: All protected endpoints require a valid JWT token
-•	TLS Encryption: HTTPS with custom certificates
-•	HashiCorp Vault Integration: Secure storage for sensitive credentials
-•	Role-Based Access Control: Different endpoints require different user roles
+-	JWT Authentication: All protected endpoints require a valid JWT token
+-	TLS Encryption: HTTPS with custom certificates
+-	HashiCorp Vault Integration: Secure storage for sensitive credentials
+-	Role-Based Access Control: Different endpoints require different user roles
 
 ### License
 
