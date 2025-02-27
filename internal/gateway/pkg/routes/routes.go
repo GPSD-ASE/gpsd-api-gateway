@@ -7,8 +7,22 @@ import (
 )
 
 func RegisterRoutes(r *mux.Router) {
-	r.HandleFunc("/register", handlers.RegisterHandler).Methods("POST")            // forward to user service
-	r.HandleFunc("/register-admin", handlers.RegisterAdminHandler).Methods("POST") // forward to user service, add roleType in body
-	r.HandleFunc("/login", handlers.LoginHandler).Methods("POST")                  // -> forward to user service, return the token from user service
-	r.HandleFunc("/verify", handlers.VerifyHandler).Methods("GET")                 // -> for all users, logic in api-gateway
+	// User routes
+	r.HandleFunc("/register", handlers.RegisterHandler).Methods("POST")
+	r.HandleFunc("/register-admin", handlers.RegisterAdminHandler).Methods("POST")
+	r.HandleFunc("/login", handlers.LoginHandler).Methods("POST")
+	r.HandleFunc("/verify", handlers.VerifyHandler).Methods("GET")
+
+	// Map routes
+	r.HandleFunc("/zones", handlers.ZonesHandler).Methods("GET")
+	r.HandleFunc("/routing", handlers.RoutingHandler).Methods("GET")
+	r.HandleFunc("/evacuation", handlers.EvacuationHandler).Methods("POST")
+	r.HandleFunc("/traffic", handlers.TrafficHandler).Methods("GET")
+
+	// Incident routes
+	r.HandleFunc("/incidents", handlers.GetAllIncidentsHandler).Methods("GET")
+	r.HandleFunc("/incidents", handlers.CreateIncidentHandler).Methods("POST")
+	r.HandleFunc("/incidents/{id}", handlers.GetIncidentByIdHandler).Methods("GET")
+	r.HandleFunc("/incidents/{id}", handlers.DeleteIncidentHandler).Methods("DELETE")
+	r.HandleFunc("/incidents/{id}/status/{status}", handlers.ChangeIncidentStatusHandler).Methods("PATCH")
 }
