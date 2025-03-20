@@ -45,7 +45,7 @@ func startHTTPServer() {
 	routes.RegisterRoutes(r)
 
 	server := &http.Server{
-		Addr:    ":3005",
+		Addr:    ":3000",
 		Handler: r,
 	}
 
