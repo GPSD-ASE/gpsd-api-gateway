@@ -39,18 +39,17 @@ func startHTTPSServer() {
 	}
 }
 
-// Start HTTP Server for k3s health checks only.
+// Start HTTP Server
 func startHTTPServer() {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/health", handlers.HealthCheckHandler)
-	mux.HandleFunc("/ready", handlers.HealthCheckHandler)
+	r := mux.NewRouter()
+	routes.RegisterRoutes(r)
 
 	server := &http.Server{
 		Addr:    ":3005",
-		Handler: mux,
+		Handler: r,
 	}
 
-	log.Println("HTTP Health Check Server for API Gateway running on http://0.0.0.0:3005.")
+	log.Println("HTTP  Server for API Gateway running on http://0.0.0.0:3000.")
 	err := server.ListenAndServe()
 	if err != nil {
 		log.Fatal("HTTP server error:", err)
@@ -65,6 +64,6 @@ func main() {
 
 	log.Printf("Vault is running at %s.", config.ApiGatewayConfig.VaultAddr)
 
-	go startHTTPServer()
-	startHTTPSServer()
+	startHTTPServer()
+	// startHTTPSServer()
 }

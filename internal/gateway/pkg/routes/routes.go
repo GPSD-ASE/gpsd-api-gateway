@@ -7,6 +7,10 @@ import (
 )
 
 func RegisterRoutes(r *mux.Router) {
+	// Health check routes
+	r.HandleFunc("/health", handlers.HealthCheckHandler)
+	r.HandleFunc("/ready", handlers.HealthCheckHandler)
+
 	// User routes
 	r.HandleFunc("/register", handlers.RegisterHandler).Methods("POST")
 	r.HandleFunc("/register-admin", handlers.RegisterAdminHandler).Methods("POST")
