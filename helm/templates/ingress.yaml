@@ -37,7 +37,7 @@ spec:
               service:
                 name: {{ include "gpsd-api-gateway.fullname" $ }}
                 port:
-                  number: {{ $.Values.service.port }}
+                  number: {{ index $.Values.service 0 "port" }}
           {{- end }}
     {{- end }}
 {{- end }}
