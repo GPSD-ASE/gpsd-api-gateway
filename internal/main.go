@@ -11,7 +11,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Start HTTP Server
 func startHTTPServer() {
 	r := mux.NewRouter()
 	routes.RegisterRoutes(r)
@@ -33,8 +32,6 @@ func main() {
 
 	envs := os.Environ()
 	config.LoadConfig(envs)
-
-	log.Printf("Vault is running at %s.", config.ApiGatewayConfig.VaultAddr)
 
 	startHTTPServer()
 }
