@@ -23,23 +23,30 @@ readinessProbe:
 
 service:
   - name: https
-    type: NodePort
+    type: ClusterIP
     port: 443
     targetPort: 3000
-    nodePort: 30000
   - name: http
     type: ClusterIP
     port: 3005
     targetPort: 3005
 
 ingress:
-  enabled: false
-  annotations: {}
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
   hosts:
-    - host: gpsd-api-gateway.local
+    - host: gpsd.luckysrv.de
       paths:
         - path: /
           pathType: Prefix
+  tls:
+    - secretName: gpsd-tls
+      hosts:
+        - gpsd.luckysrv.de
 
 env:
   VAULT_ADDR: "https://152.53.124.121:8200"
