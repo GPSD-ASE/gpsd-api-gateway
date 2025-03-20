@@ -44,6 +44,8 @@ func checkVaultHealth(vaultAddr string) *VaultHealth {
 
 // HealthCheckHandler for HTTP-only endpoints.
 func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	response := HealthResponse{
 		Status:    "ok",
 		Timestamp: time.Now().UTC().Format(time.RFC3339),
