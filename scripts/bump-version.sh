@@ -34,10 +34,10 @@ awk -v old="version: $CURRENT_VERSION" -v new="version: $NEW_VERSION" '{gsub(old
 VALUES_FILE="helm/values.yaml"
 if [[ "$(uname)" == "Darwin" ]]; then
     # On macOS
-    sed -i '' "s/tag: \"v$CURRENT_VERSION\"/tag: \"v$NEW_VERSION\"/" $VALUES_FILE
+    sed -i '' "s/tag: v$CURRENT_VERSION/tag: v$NEW_VERSION/" $VALUES_FILE
 else
     # On linux and others
-    sed -i "s/tag: \"v$CURRENT_VERSION\"/tag: \"v$NEW_VERSION\"/" $VALUES_FILE
+    sed -i "s/tag: v$CURRENT_VERSION/tag: v$NEW_VERSION/" $VALUES_FILE
 fi
 
 # Update CHANGELOG.md
