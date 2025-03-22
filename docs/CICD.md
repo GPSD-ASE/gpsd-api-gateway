@@ -37,6 +37,15 @@ npm install --save-dev @commitlint/cli @commitlint/config-conventional
 chmod +x scripts/bump-version.sh scripts/update-changelog.sh
 ```
 
-4.  Setup GitHub Actions workflow.
+4.  Setup GitHub Actions workflow with .github/workflows/release.yml.
 
-4.1 Create .github/workflows/release.yml:
+5. Update Makefile to include release tasks.
+
+6. Add secrets to current GitHub repository.
+
+7. Push to main and check the GitHub Actions tab to see the workflow run
+
+It should update the changelog
+Bump the version
+Build and push a new Docker image
+Update the Helm chart

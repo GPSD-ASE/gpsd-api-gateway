@@ -1,4 +1,4 @@
-TAG ?= 0.1.2
+TAG ?= 0.1.3
 NAMESPACE = gpsd
 DEPLOYMENT = gpsd-api-gateway
 SERVICE_NAME = $(DEPLOYMENT)
