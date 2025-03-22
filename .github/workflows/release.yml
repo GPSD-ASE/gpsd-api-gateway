@@ -27,18 +27,15 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
-      - name: Update changelog
+      - name: Update changelog and bump version
         if: steps.check_changes.outputs.changes == 'true'
         run: |
           ./scripts/update-changelog.sh
-          git add CHANGELOG.md
-
-      - name: Bump version
-        if: steps.check_changes.outputs.changes == 'true'
-        run: |
           ./scripts/bump-version.sh
-          git add helm/Chart.yaml helm/values.yaml Makefile
-          cat helm/Chart.yaml
+          # Commit changes to main branch first
+          git add helm/Chart.yaml helm/values.yaml Makefile CHANGELOG.md
+          git commit -m "chore: bump version to ${{ env.NEW_VERSION }}"
+          git tag -a "v${{ env.NEW_VERSION }}" -m "Release v${{ env.NEW_VERSION }}"
         
       - name: Set up docker build
         if: steps.check_changes.outputs.changes == 'true'
@@ -64,26 +61,12 @@ jobs:
       - name: Package and publish helm chart
         if: steps.check_changes.outputs.changes == 'true'
         run: |
-          git stash
           mkdir -p /tmp/gpsd/
           cat ./helm/Chart.yaml
           helm package ./helm -d /tmp/gpsd/
           helm repo index /tmp/gpsd --url https://gpsd-ase.github.io/gpsd-api-gateway/ --merge /tmp/gpsd/index.yaml
           git checkout gh-pages || git checkout -b gh-pages
           cp /tmp/gpsd/* .
-          ls .
-          cat index.yaml
-          git diff
           git add .
           git commit -m "chore: update helm chart to v${{ env.NEW_VERSION }}"
           git push origin gh-pages
-
-      - name: Commit version changes
-        if: steps.check_changes.outputs.changes == 'true'
-        run: |
-          git checkout main
-          git stash pop
-          git add .
-          git commit -m "chore: bump version to ${{ env.NEW_VERSION }}"
-          git tag -a "v${{ env.NEW_VERSION }}" -m "Release v${{ env.NEW_VERSION }}"
-          git push origin main --tags
