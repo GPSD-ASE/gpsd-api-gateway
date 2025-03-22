@@ -28,8 +28,7 @@ EOF
 
 # Function to get commits with their hash
 get_commits_with_hash() {
-    git log --pretty=format:"%h %s" $LATEST_TAG..HEAD | grep -E "$1" | sed "s/^\\([a-f0-9]\\+\\) $2: \\(.
-    *\\)/- \\2 ([\\1](${REPO_URL}\\/commit\\/\\1))/"
+    git log --pretty=format:"%h %s" $LATEST_TAG..HEAD | grep -E "$1" | sed "s/^\\([a-f0-9]\\+\\) $2: \\(.*\\)/- \\2 ([\\1](${REPO_URL}\\/commit\\/\\1))/"
 }
 
 # Get commits by type
