@@ -34,6 +34,7 @@ get_commits_with_hash() {
         hash=$(echo "$line" | cut -d' ' -f1)
         message=$(echo "$line" | sed "s/^$hash $type: //")
         echo "- $message ([$hash]($REPO_URL/commit/$hash))"
+        echo ""  # Add a newline after each commit
     fi
     done
 }
