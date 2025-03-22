@@ -4,6 +4,7 @@ set -e
 # Get the latest tag or default to v0.0.0 if none exists
 LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo 'v0.0.0')
 TODAY=$(date +%Y-%m-%d)
+REPO_URL=$(git config --get remote.origin.url | sed 's/\.git$//' | sed 's|git@github.com:|https://github.com/|')
 
 echo "Generating changelog entries since $LATEST_TAG..."
 
@@ -20,28 +21,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 EOF
 
-# Get commits since the last tag
-COMMITS=$(git log --pretty=format:"- %s" $LATEST_TAG..HEAD | grep -E "^- (feat|fix|BREAKING CHANGE):")
+# Function to get commits with their hash
+get_commits_with_hash() {
+    git log --pretty=format:"%h %s" $LATEST_TAG..HEAD | grep -E "$1" | sed "s/^\\([a-f0-9]\\+\\) $2: \\(.*\\)/- \\2 ([\\1](${REPO_URL}\\/commit\\/\\1))/"
+}
 
-# Group commits by type
-FEATURES=$(echo "$COMMITS" | grep -E "^- feat:" | sed 's/^- feat: //')
-FIXES=$(echo "$COMMITS" | grep -E "^- fix:" | sed 's/^- fix: //')
-BREAKING=$(echo "$COMMITS" | grep -E "^- BREAKING CHANGE:" | sed 's/^- BREAKING CHANGE: //')
+# Get commits by type
+FEATURES=$(get_commits_with_hash "^[a-f0-9]+ feat:" "feat")
+FIXES=$(get_commits_with_hash "^[a-f0-9]+ fix:" "fix")
+BREAKING=$(get_commits_with_hash "^[a-f0-9]+ BREAKING CHANGE:" "BREAKING CHANGE")
 
 # Only add sections if they have content
 if [ ! -z "$FEATURES" ]; then
     echo -e "\n### Added" >> CHANGELOG.new
     echo "$FEATURES" >> CHANGELOG.new
+    echo "" >> CHANGELOG.new  # Add a newline after section
 fi
 
 if [ ! -z "$FIXES" ]; then
     echo -e "\n### Fixed" >> CHANGELOG.new
     echo "$FIXES" >> CHANGELOG.new
+    echo "" >> CHANGELOG.
+    
+    new  # Add a newline after section
 fi
 
 if [ ! -z "$BREAKING" ]; then
     echo -e "\n### Breaking Changes" >> CHANGELOG.new
     echo "$BREAKING" >> CHANGELOG.new
+    echo "" >> CHANGELOG.new  # Add a newline after section
+fi
+
+# If no changes were found, add a placeholder
+if [ -z "$FEATURES" ] && [ -z "$FIXES" ] && [ -z "$BREAKING" ]; then
+    echo -e "\n### Maintenance" >> CHANGELOG.new
+    echo "- Minor updates and improvements" >> CHANGELOG.new
+    echo "" >> CHANGELOG.new  # Add a newline after section
 fi
 
 # Replace the changelog
