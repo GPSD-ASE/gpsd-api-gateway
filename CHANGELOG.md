@@ -7,9 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.14] - 2025-03-22
+## [0.1.15] - 2025-03-22
 
 
-### Added
-6b94c55 fix: incorrect git log command
+### Fixed
+5000aa2 fix: syntax in update-changelog.sh
+cc362ed fix: feat and fix mixup
 
