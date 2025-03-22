@@ -59,21 +59,21 @@ jobs:
       - name: Package and publish helm chart
         if: steps.check_changes.outputs.changes == 'true'
         run: |
-          helm package ./helm -d /tmp
+          mkdir -p /tmp/gpsd/
+          helm package ./helm -d /tmp/gpsd/
+          helm repo index /tmp/gpsd --url https://gpsd-ase.github.io/gpsd-api-gateway/ --merge /tmp/gpsd/index.yaml
           git checkout gh-pages || git checkout -b gh-pages
-          cp /tmp/gpsd-api-gateway-*.tgz .
-          if [ -f index.yaml ]; then
-            helm repo index . --url https://gpsd-ase.github.io/gpsd-api-gateway/ --merge index.yaml
-          else
-            helm repo index . --url https://gpsd-ase.github.io/gpsd-api-gateway/
-          fi
+          cp /tmp/gpsd/* .
+          ls .
+          git status
           git add .
-          git commit -m "update helm chart to v${{ env.NEW_VERSION }}"
+          git commit -m "chore: update helm chart to v${{ env.NEW_VERSION }}"
           git push origin gh-pages
 
       - name: Commit version changes
         if: steps.check_changes.outputs.changes == 'true'
         run: |
+          git checkout main
           git add helm/Chart.yaml helm/values.yaml CHANGELOG.md
           git commit -m "chore: bump version to ${{ env.NEW_VERSION }}"
           git tag -a "v${{ env.NEW_VERSION }}" -m "Release v${{ env.NEW_VERSION }}"
