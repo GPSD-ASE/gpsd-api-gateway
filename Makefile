@@ -12,16 +12,16 @@ VERSION := $(shell grep "version:" helm/Chart.yaml | head -1 | sed 's/version: /
 docker: build-image push-image
 
 build-image:
-	@echo "Building Docker image $(IMAGE_NAME):$(TAG)..."
-	docker build -f Dockerfile -t $(IMAGE_NAME):$(TAG) --platform linux/amd64 .
+	@echo "Building Docker image $(IMAGE_NAME):v$(TAG)..."
+	docker build -f Dockerfile -t $(IMAGE_NAME):v$(TAG) --platform linux/amd64 .
 
 push-image:
-	@echo "Pushing Docker image $(IMAGE_NAME):$(TAG)..."
-	docker push $(IMAGE_NAME):$(TAG)
+	@echo "Pushing Docker image $(IMAGE_NAME):v$(TAG)..."
+	docker push $(IMAGE_NAME):v$(TAG)
 
 run-image:
-	@echo "Running Docker image $(IMAGE_NAME):$(TAG)..."
-	docker run -p 3000:3000 $(IMAGE_NAME):$(TAG)
+	@echo "Running Docker image $(IMAGE_NAME):v$(TAG)..."
+	docker run -p 3000:3000 $(IMAGE_NAME):v$(TAG)
 
 clean-image:
 	@echo "Cleaning dangling Docker images..."
@@ -34,7 +34,7 @@ develop: helm-uninstall build-image push-image helm
 
 helm:
 	@echo "Upgrading/Installing $(DEPLOYMENT) Helm chart..."
-	helm upgrade --install $(DEPLOYMENT) ./helm --set image.tag=$(TAG) --namespace $(NAMESPACE)
+	helm upgrade --install $(DEPLOYMENT) ./helm --set image.tag=v$(TAG) --namespace $(NAMESPACE)
 
 helm-uninstall:
 	@echo "Uninstalling $(DEPLOYMENT) from Kubernetes..."
@@ -59,9 +59,9 @@ bump-version:
 	./scripts/bump-version.sh
 
 build-push:
-	@echo "Building and pushing Docker image $(IMAGE_NAME):$(VERSION)..."
-	docker build -t $(IMAGE_NAME):$(VERSION) -t $(IMAGE_NAME):latest .
-	docker push $(IMAGE_NAME):$(VERSION)
+	@echo "Building and pushing Docker image $(IMAGE_NAME):v$(VERSION)..."
+	docker build -t $(IMAGE_NAME):v$(VERSION) -t $(IMAGE_NAME):latest .
+	docker push $(IMAGE_NAME):v$(VERSION)
 	docker push $(IMAGE_NAME):latest
 
 # GitHub Pages and Helm chart publishing
