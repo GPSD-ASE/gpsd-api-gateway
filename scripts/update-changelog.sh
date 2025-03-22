@@ -4,7 +4,12 @@ set -e
 # Get the latest tag or default to v0.0.0 if none exists
 LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo 'v0.0.0')
 TODAY=$(date +%Y-%m-%d)
-REPO_URL=$(git config --get remote.origin.url | sed 's/\.git$//' | sed 's|git@github.com:|https://github.com/|')
+
+ORG=$(echo $REMOTE_URL | rev | cut -d'/' -f2 | rev)
+REPO=$(echo $REMOTE_URL | rev | cut -d'/' -f1 | rev | sed 's/\.git$//')
+REPO_URL="https://github.com/$ORG/$REPO"
+
+echo "Using repository URL: $REPO_URL"
 
 echo "Generating changelog entries since $LATEST_TAG..."
 
@@ -23,7 +28,8 @@ EOF
 
 # Function to get commits with their hash
 get_commits_with_hash() {
-    git log --pretty=format:"%h %s" $LATEST_TAG..HEAD | grep -E "$1" | sed "s/^\\([a-f0-9]\\+\\) $2: \\(.*\\)/- \\2 ([\\1](${REPO_URL}\\/commit\\/\\1))/"
+    git log --pretty=format:"%h %s" $LATEST_TAG..HEAD | grep -E "$1" | sed "s/^\\([a-f0-9]\\+\\) $2: \\(.
+    *\\)/- \\2 ([\\1](${REPO_URL}\\/commit\\/\\1))/"
 }
 
 # Get commits by type
