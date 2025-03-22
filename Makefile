@@ -77,6 +77,8 @@ gh-pages-publish:
 	else \
 	helm repo index . --url https://$(REMOTE_CHART_REPOSITORY)/$(SERVICE_NAME)/; \
 	fi
+	ls .
+	git status
 	git add .
 	git commit -m "chore: update Helm chart to v$(VERSION)"
 	git push origin gh-pages
