@@ -1,72 +1,49 @@
 #!/bin/bash
 set -e
 
-LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo 'v0.0.0')
-echo "Generating changelog entries since $LAST_TAG..."
+# Get the latest tag or default to v0.0.0 if none exists
+LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo 'v0.0.0')
+TODAY=$(date +%Y-%m-%d)
 
-# Generate changelog entry for unreleased changes
-echo "## [Unreleased]" > /tmp/new-changes.md
-echo "" >> /tmp/new-changes.md
+echo "Generating changelog entries since $LATEST_TAG..."
 
-# Added section for features
-if git log "$LAST_TAG"..HEAD --grep="^feat" --pretty=format:%s | grep -q "."; then
-    echo "### Added" >> /tmp/new-changes.md
-    git log "$LAST_TAG"..HEAD --grep="^feat" --pretty=format:"- %s" | sed 's/feat: //' >> /tmp/new-changes.md
-    echo "" >> /tmp/new-changes.md
+# Create a new temporary changelog
+cat > CHANGELOG.new << EOF
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+EOF
+
+# Get commits since the last tag
+COMMITS=$(git log --pretty=format:"- %s" $LATEST_TAG..HEAD | grep -E "^- (feat|fix|BREAKING CHANGE):")
+
+# Group commits by type
+FEATURES=$(echo "$COMMITS" | grep -E "^- feat:" | sed 's/^- feat: //')
+FIXES=$(echo "$COMMITS" | grep -E "^- fix:" | sed 's/^- fix: //')
+BREAKING=$(echo "$COMMITS" | grep -E "^- BREAKING CHANGE:" | sed 's/^- BREAKING CHANGE: //')
+
+# Only add sections if they have content
+if [ ! -z "$FEATURES" ]; then
+    echo -e "\n### Added" >> CHANGELOG.new
+    echo "$FEATURES" >> CHANGELOG.new
 fi
 
-# Fixed section for bugs
-if git log "$LAST_TAG"..HEAD --grep="^fix" --pretty=format:%s | grep -q "."; then
-    echo "### Fixed" >> /tmp/new-changes.md
-    git log "$LAST_TAG"..HEAD --grep="^fix" --pretty=format:"- %s" | sed 's/fix: //' >> /tmp/new-changes.md
-    echo "" >> /tmp/new-changes.md
+if [ ! -z "$FIXES" ]; then
+    echo -e "\n### Fixed" >> CHANGELOG.new
+    echo "$FIXES" >> CHANGELOG.new
 fi
 
-# Changed section for refactoring, etc.
-if git log "$LAST_TAG"..HEAD --grep="^refactor\|^perf\|^style" --pretty=format:%s | grep -q "."; then
-    echo "### Changed" >> /tmp/new-changes.md
-    git log "$LAST_TAG"..HEAD --grep="^refactor\|^perf\|^style" --pretty=format:"- %s" | sed 's/refactor: //' | sed 's/perf: //' | sed 's/style: //' >> /tmp/new-changes.md
-    echo "" >> /tmp/new-changes.md
+if [ ! -z "$BREAKING" ]; then
+    echo -e "\n### Breaking Changes" >> CHANGELOG.new
+    echo "$BREAKING" >> CHANGELOG.new
 fi
 
-# Check if CHANGELOG.md exists, create if not
-if [ ! -f CHANGELOG.md ]; then
-    echo "# Changelog" > CHANGELOG.md
-    echo "" >> CHANGELOG.md
-    echo "All notable changes to this project will be documented in this file." >> CHANGELOG.md
-    echo "" >> CHANGELOG.md
-    echo "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)," >> CHANGELOG.md
-    echo "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)." >> CHANGELOG.md
-    echo "" >> CHANGELOG.md
-    echo "## [Unreleased]" >> CHANGELOG.md
-    echo "" >> CHANGELOG.md
-fi
-
-# Use a different approach for replacing the Unreleased section
-# Create a temporary file with the new content
-cat CHANGELOG.md > /tmp/changelog.tmp
-# Replace the content between ## [Unreleased] and the next section
-awk '
-    BEGIN { unreleased=0; printed=0 }
-    /^## \[Unreleased\]/ {
-        print $0;
-        system("cat /tmp/new-changes.md");
-        unreleased=1;
-        printed=1;
-        next;
-    }
-    /^## \[/ {
-        if (unreleased && !printed) {
-        system("cat /tmp/new-changes.md");
-        printed=1;
-        }
-        unreleased=0;
-        print $0;
-        next;
-    }
-    {
-        if (!unreleased) print $0;
-    }
-    ' /tmp/changelog.tmp > CHANGELOG.md
-
+# Replace the changelog
+mv CHANGELOG.new CHANGELOG.md
 echo "Changelog updated with new entries."
