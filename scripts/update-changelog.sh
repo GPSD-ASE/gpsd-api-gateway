@@ -39,30 +39,34 @@ get_commits_with_hash() {
 echo "Raw commits since last tag:"
 git log --pretty=format:"%h %s" $LATEST_TAG..HEAD
 echo ""
+echo "Commits matching fix:"
+git log --pretty=format:"%h %s" $LATEST_TAG..HEAD | grep -E "^[a-f0-9]+ fix:"
+echo ""
 echo "Commits matching feat:"
 git log --pretty=format:"%h %s" $LATEST_TAG..HEAD | grep -E "^[a-f0-9]+ feat:"
 echo ""
-echo "Commits matching fix:"
-git log --pretty=format:"%h %s" $LATEST_TAG..HEAD | grep -E "^[a-f0-9]+ fix:"
+echo "Commits matching BREAKING CHANGE:"
+git log --pretty=format:"%h %s" $LATEST_TAG..HEAD | grep -E "^[a-f0-9]+ BREAKING CHANGE::"
+echo ""
 
 # Get commits by type
-FEATURES=$(get_commits_with_hash "^[a-f0-9]+ feat:" "feat")
-FIXES=$(get_commits_with_hash "^[a-f0-9]+ fix:" "fix")
+FIXES=$(get_commits_with_hash "^[a-f0-9]+ feat:" "fix")
+FEATURES=$(get_commits_with_hash "^[a-f0-9]+ fix:" "feat")
 BREAKING=$(get_commits_with_hash "^[a-f0-9]+ BREAKING CHANGE:" "BREAKING CHANGE")
 
 # Only add sections if they have content
-if [ ! -z "$FEATURES" ]; then
-    echo -e "\n### Added" >> CHANGELOG.new
-    echo "$FEATURES" >> CHANGELOG.new
-    echo "" >> CHANGELOG.new  # Add a newline after section
-fi
-
 if [ ! -z "$FIXES" ]; then
     echo -e "\n### Fixed" >> CHANGELOG.new
     echo "$FIXES" >> CHANGELOG.new
     echo "" >> CHANGELOG.
     
     new  # Add a newline after section
+fi
+
+if [ ! -z "$FEATURES" ]; then
+    echo -e "\n### Added" >> CHANGELOG.new
+    echo "$FEATURES" >> CHANGELOG.new
+    echo "" >> CHANGELOG.new  # Add a newline after section
 fi
 
 if [ ! -z "$BREAKING" ]; then
