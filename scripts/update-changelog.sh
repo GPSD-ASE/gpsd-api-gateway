@@ -43,8 +43,8 @@ git log --pretty=format:"%h %s" $LATEST_TAG..HEAD
 echo ""
 
 # Get commits by type
-FIXES=$(get_commits_with_hash "^[a-f0-9]+ feat:")
-FEATURES=$(get_commits_with_hash "^[a-f0-9]+ fix:")
+FIXES=$(get_commits_with_hash "^[a-f0-9]+ fix:")
+FEATURES=$(get_commits_with_hash "^[a-f0-9]+ feat:")
 BREAKING=$(get_commits_with_hash "^[a-f0-9]+ BREAKING CHANGE:")
 
 # Only add sections if they have content
