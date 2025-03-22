@@ -69,10 +69,12 @@ build-push:
 
 gh-pages-publish:
 	@echo "Publishing Helm chart for $(SERVICE_NAME) to GitHub Pages..."
-	helm package ./$(CHART_DIRECTORY) -d ./
+	rm -rf /tmp/$(NAMESPACE)/*
+	mkdir -p /tmp/$(NAMESPACE)/
+	helm package ./$(CHART_DIRECTORY) -d /tmp/$(NAMESPACE)/
+	helm repo index /tmp/$(NAMESPACE)/ --url https://$(REMOTE_CHART_REPOSITORY)/$(SERVICE_NAME)/ --merge /tmp/$(NAMESPACE)/index.yaml
 	git checkout gh-pages || git checkout -b gh-pages
-	helm repo index ./ --url https://$(REMOTE_CHART_REPOSITORY)/$(SERVICE_NAME)/ --merge ./index.yaml
-	cp /tmp/$(DEPLOYMENT)-$(TAG).tgz /tmp/index.yaml .
+	cp /tmp/$(NAMESPACE)/* .
 	ls .
 	git status
 	git add .
