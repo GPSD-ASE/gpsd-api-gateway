@@ -3,10 +3,11 @@ set -e
 
 # Get the latest tag or default to v0.0.0 if none exists
 LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo 'v0.0.0')
+echo "Using latest tag: $LATEST_TAG"
+
 TODAY=$(date +%Y-%m-%d)
 
 REPO_URL="https://github.com/GPSD-ASE/gpsd-api-gateway.git"
-
 echo "Using repository URL: $REPO_URL"
 
 echo "Generating changelog entries since $LATEST_TAG..."
@@ -34,6 +35,15 @@ get_commits_with_hash() {
         echo "- $message ([$hash]($REPO_URL/commit/$hash))"
     done
 }
+
+echo "Raw commits since last tag:"
+git log --pretty=format:"%h %s" $LATEST_TAG..HEAD
+echo ""
+echo "Commits matching feat:"
+git log --pretty=format:"%h %s" $LATEST_TAG..HEAD | grep -E "^[a-f0-9]+ feat:"
+echo ""
+echo "Commits matching fix:"
+git log --pretty=format:"%h %s" $LATEST_TAG..HEAD | grep -E "^[a-f0-9]+ fix:"
 
 # Get commits by type
 FEATURES=$(get_commits_with_hash "^[a-f0-9]+ feat:" "feat")
