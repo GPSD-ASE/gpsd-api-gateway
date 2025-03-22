@@ -35,6 +35,10 @@ VALUES_FILE="helm/values.yaml"
 sed -i "" "s/tag: \"$CURRENT_VERSION\"/tag: \"$NEW_VERSION\"/" $VALUES_FILE
 sed -i "" "s/tag: $CURRENT_VERSION/tag: $NEW_VERSION/" $VALUES_FILE
 
+# Update Makefile
+MAKEFILE="Makefile"
+sed -i "" "s/TAG ?= $CURRENT_VERSION/TAG ?= $NEW_VERSION/" $MAKEFILE
+
 # Update CHANGELOG.md
 DATE=$(date +%Y-%m-%d)
 sed -i "" "s/## \[Unreleased\]/## \[Unreleased\]\n\n## \[$NEW_VERSION\] - $DATE/" CHANGELOG.md
