@@ -8,7 +8,7 @@ RUN go mod tidy
 
 COPY . .
 
-RUN go build -o gpsd-api-gateway ./internal
+RUN go build -mod=mod -o gpsd-api-gateway ./internal
 
 FROM debian:bookworm
 
