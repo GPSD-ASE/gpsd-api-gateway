@@ -58,18 +58,20 @@ jobs:
           push: true
           tags: |
             gpsd/gpsd-api-gateway:latest
-            gpsd/gpsd-api-gateway:${{ env.NEW_VERSION }}
+            gpsd/gpsd-api-gateway:v${{ env.NEW_VERSION }}
 
       - name: Package and publish helm chart
         if: steps.check_changes.outputs.changes == 'true'
         run: |
           git stash
           mkdir -p /tmp/gpsd/
+          cat ./helm/Chart.yaml
           helm package ./helm -d /tmp/gpsd/
           helm repo index /tmp/gpsd --url https://gpsd-ase.github.io/gpsd-api-gateway/ --merge /tmp/gpsd/index.yaml
           git checkout gh-pages || git checkout -b gh-pages
           cp /tmp/gpsd/* .
           ls .
+          cat index.yaml
           git status
           git add .
           git commit -m "chore: update helm chart to v${{ env.NEW_VERSION }}"
