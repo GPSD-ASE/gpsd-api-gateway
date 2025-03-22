@@ -32,13 +32,7 @@ awk -v old="version: $CURRENT_VERSION" -v new="version: $NEW_VERSION" '{gsub(old
 
 # Update values.yaml image tag
 VALUES_FILE="helm/values.yaml"
-if [[ "$(uname)" == "Darwin" ]]; then
-    # On macOS
-    sed -i '' "s/tag: v$CURRENT_VERSION/tag: v$NEW_VERSION/" $VALUES_FILE
-else
-    # On linux and others
-    sed -i "s/tag: v$CURRENT_VERSION/tag: v$NEW_VERSION/" $VALUES_FILE
-fi
+awk -v old="tag: v$CURRENT_VERSION" -v new="tag: v$NEW_VERSION" '{gsub(old, new); print}' $VALUES_FILE > tmp && mv tmp $VALUES_FILE
 
 # Update CHANGELOG.md
 DATE=$(date +%Y-%m-%d)
