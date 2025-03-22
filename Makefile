@@ -1,4 +1,3 @@
-TAG ?= 0.1.3
 NAMESPACE = gpsd
 DEPLOYMENT = gpsd-api-gateway
 SERVICE_NAME = $(DEPLOYMENT)
@@ -12,16 +11,16 @@ VERSION := $(shell grep "version:" helm/Chart.yaml | head -1 | sed 's/version: /
 docker: build-image push-image
 
 build-image:
-	@echo "Building Docker image $(IMAGE_NAME):v$(TAG)..."
-	docker build -f Dockerfile -t $(IMAGE_NAME):v$(TAG) --platform linux/amd64 .
+	@echo "Building Docker image $(IMAGE_NAME):v$(VERSION)..."
+	docker build -f Dockerfile -t $(IMAGE_NAME):v$(VERSION) --platform linux/amd64 .
 
 push-image:
-	@echo "Pushing Docker image $(IMAGE_NAME):v$(TAG)..."
-	docker push $(IMAGE_NAME):v$(TAG)
+	@echo "Pushing Docker image $(IMAGE_NAME):v$(VERSION)..."
+	docker push $(IMAGE_NAME):v$(VERSION)
 
 run-image:
-	@echo "Running Docker image $(IMAGE_NAME):v$(TAG)..."
-	docker run -p 3000:3000 $(IMAGE_NAME):v$(TAG)
+	@echo "Running Docker image $(IMAGE_NAME):v$(VERSION)..."
+	docker run -p 3000:3000 $(IMAGE_NAME):v$(VERSION)
 
 clean-image:
 	@echo "Cleaning dangling Docker images..."
@@ -34,7 +33,7 @@ develop: helm-uninstall build-image push-image helm
 
 helm:
 	@echo "Upgrading/Installing $(DEPLOYMENT) Helm chart..."
-	helm upgrade --install $(DEPLOYMENT) ./helm --set image.tag=v$(TAG) --namespace $(NAMESPACE)
+	helm upgrade --install $(DEPLOYMENT) ./helm --set image.tag=v$(VERSION) --namespace $(NAMESPACE)
 
 helm-uninstall:
 	@echo "Uninstalling $(DEPLOYMENT) from Kubernetes..."
