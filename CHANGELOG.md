@@ -13,6 +13,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.4] - 2025-03-22
 
 ### Fixed
+- update release.yml to do push with tags
+- update pipeline
+- pipeline issues
+- pipeline
+- pipeline
+- pipeline
+- pipeline
+- release,yml
+- stash changes while checkout to gh-pages
+- pipeline issues with publish helm chart
+- remove vendor and update Dockerfile to build without vendor
+- use awk instead of sed
+- remove changelog and update changelog script to generate if not created
+- update scripts/bump-version.sh to bump version in makefile
+## [0.1.4] - 2025-03-22
+## [Unreleased]
+
+## [0.1.4] - 2025-03-22
+## [Unreleased]
+
+## [0.1.4] - 2025-03-22
+
+### Fixed
+- update release.yml to do push with tags
+- update pipeline
+- pipeline issues
+- pipeline
+- pipeline
+- pipeline
+- pipeline
+- release,yml
+- stash changes while checkout to gh-pages
+- pipeline issues with publish helm chart
+- remove vendor and update Dockerfile to build without vendor
+- use awk instead of sed
+- remove changelog and update changelog script to generate if not created
+- update scripts/bump-version.sh to bump version in makefile
+## [0.1.4] - 2025-03-22
+
+### Fixed
 - pipeline
 - pipeline
 - release,yml
