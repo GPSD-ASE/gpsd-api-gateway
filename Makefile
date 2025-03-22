@@ -71,7 +71,7 @@ gh-pages-publish:
 	@echo "Publishing Helm chart for $(SERVICE_NAME) to GitHub Pages..."
 	helm package ./$(CHART_DIRECTORY) -d /tmp
 	git checkout gh-pages || git checkout -b gh-pages
-	cp /tmp/$(DEPLOYMENT)-*.tgz .
+	cp /tmp/$(DEPLOYMENT)-$(TAG).tgz .
 	if [ -f index.yaml ]; then \
 	helm repo index . --url https://$(REMOTE_CHART_REPOSITORY)/$(SERVICE_NAME)/ --merge index.yaml; \
 	else \
