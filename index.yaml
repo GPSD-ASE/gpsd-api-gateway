@@ -3,9 +3,9 @@ entries:
   gpsd-api-gateway:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-03-22T17:50:23.907943Z"
+    created: "2025-03-22T17:53:00.40422Z"
     description: A Helm chart for deploying the GPSD API Gateway service.
-    digest: a6dea06b50d4ba7241e83b6f62f13a1c08e8f3c76635c6c6a90f7928008e08e4
+    digest: c3f6db8f76161e447ef06faf24c4d625b68c1b29e74b6185dfe5e5e43b5988c8
     name: gpsd-api-gateway
     type: application
     urls:
@@ -41,4 +41,4 @@ entries:
     urls:
     - https://gpsd-ase.github.io/gpsd-api-gateway/gpsd-api-gateway-0.1.0.tgz
     version: 0.1.0
-generated: "2025-03-22T17:50:23.906938Z"
+generated: "2025-03-22T17:53:00.403648Z"
