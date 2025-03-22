@@ -7,6 +7,8 @@ TODAY=$(date +%Y-%m-%d)
 
 REPO_URL="https://github.com/GPSD-ASE/gpsd-api-gateway.git"
 
+echo "Using repository URL: $REPO_URL"
+
 echo "Generating changelog entries since $LATEST_TAG..."
 
 # Create a new temporary changelog
@@ -24,7 +26,13 @@ EOF
 
 # Function to get commits with their hash
 get_commits_with_hash() {
-    git log --pretty=format:"%h %s" $LATEST_TAG..HEAD | grep -E "$1" | sed "s/^\\([a-f0-9]\\+\\) $2: \\(.*\\)/- \\2 ([\\1](${REPO_URL}\\/commit\\/\\1))/"
+    local type=$1
+    local prefix=$2
+    git log --pretty=format:"%h %s" $LATEST_TAG..HEAD | grep -E "^[a-f0-9]+ $type:" | while read -r line; do
+        hash=$(echo "$line" | cut -d' ' -f1)
+        message=$(echo "$line" | sed "s/^$hash $prefix: //")
+        echo "- $message ([$hash]($REPO_URL/commit/$hash))"
+    done
 }
 
 # Get commits by type
