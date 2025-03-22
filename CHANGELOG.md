@@ -7,10 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.15] - 2025-03-22
+## [0.1.16] - 2025-03-22
 
 
 ### Fixed
-5000aa2 fix: syntax in update-changelog.sh
-cc362ed fix: feat and fix mixup
+a051fb5 fix: add a newline after each commit in changelog
 
