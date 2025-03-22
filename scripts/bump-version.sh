@@ -14,7 +14,7 @@ determine_bump_type() {
 
 # Get current version from Chart.yaml and bump it
 CHART_FILE="helm/Chart.yaml"
-CURRENT_VERSION=$(grep "version:" $CHART_FILE | head -1 | sed 's/version: //')
+CURRENT_VERSION=$(grep "version:" $CHART_FILE | head -1 | awk '{print $2}')
 BUMP_TYPE=$(determine_bump_type)
 
 if [[ "$BUMP_TYPE" == "major" ]]; then
@@ -28,20 +28,20 @@ fi
 echo "Bumping version from $CURRENT_VERSION to $NEW_VERSION"
 
 # Update Chart.yaml
-sed -i "" "s/version: $CURRENT_VERSION/version: $NEW_VERSION/" $CHART_FILE
+awk -v old="version: $CURRENT_VERSION" -v new="version: $NEW_VERSION" '{gsub(old, new); print}' $CHART_FILE > tmp && mv tmp $CHART_FILE
 
 # Update values.yaml image tag
 VALUES_FILE="helm/values.yaml"
-sed -i "" "s/tag: \"$CURRENT_VERSION\"/tag: \"$NEW_VERSION\"/" $VALUES_FILE
-sed -i "" "s/tag: $CURRENT_VERSION/tag: $NEW_VERSION/" $VALUES_FILE
+awk -v old="tag: \"$CURRENT_VERSION\"" -v new="tag: \"$NEW_VERSION\"" '{gsub(old, new); print}' $VALUES_FILE > tmp && mv tmp $VALUES_FILE
+awk -v old="tag: $CURRENT_VERSION" -v new="tag: $NEW_VERSION" '{gsub(old, new); print}' $VALUES_FILE > tmp && mv tmp $VALUES_FILE
 
 # Update Makefile
 MAKEFILE="Makefile"
-sed -i "" "s/TAG ?= $CURRENT_VERSION/TAG ?= $NEW_VERSION/" $MAKEFILE
+awk -v old="TAG ?= $CURRENT_VERSION" -v new="TAG ?= $NEW_VERSION" '{gsub(old, new); print}' $MAKEFILE > tmp && mv tmp $MAKEFILE
 
 # Update CHANGELOG.md
 DATE=$(date +%Y-%m-%d)
-sed -i "" "s/## \[Unreleased\]/## \[Unreleased\]\n\n## \[$NEW_VERSION\] - $DATE/" CHANGELOG.md
+awk -v date="$DATE" -v new_ver="$NEW_VERSION" '/## \[Unreleased\]/{print; print ""; print "## [" new_ver "] - " date; next}1' CHANGELOG.md > tmp && mv tmp CHANGELOG.md
 
 echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
