@@ -29,21 +29,44 @@ if git log "$LAST_TAG"..HEAD --grep="^refactor\|^perf\|^style" --pretty=format:%
     echo "" >> /tmp/new-changes.md
 fi
 
-# Replace the Unreleased section in CHANGELOG.md
-sed -i "" -e '/## \[Unreleased\]/,/^## \[/c\
-## [Unreleased]\
-\
-' CHANGELOG.md
+# Check if CHANGELOG.md exists, create if not
+if [ ! -f CHANGELOG.md ]; then
+    echo "# Changelog" > CHANGELOG.md
+    echo "" >> CHANGELOG.md
+    echo "All notable changes to this project will be documented in this file." >> CHANGELOG.md
+    echo "" >> CHANGELOG.md
+    echo "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)," >> CHANGELOG.md
+    echo "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)." >> CHANGELOG.md
+    echo "" >> CHANGELOG.md
+    echo "## [Unreleased]" >> CHANGELOG.md
+    echo "" >> CHANGELOG.md
+fi
 
-# Insert the new changes after the Unreleased header
+# Use a different approach for replacing the Unreleased section
+# Create a temporary file with the new content
+cat CHANGELOG.md > /tmp/changelog.tmp
+# Replace the content between ## [Unreleased] and the next section
 awk '
-/^## \[Unreleased\]/ {
-print; 
-system("cat /tmp/new-changes.md"); 
-next;
-}
-{print}
-' CHANGELOG.md > /tmp/CHANGELOG.md.new
-mv /tmp/CHANGELOG.md.new CHANGELOG.md
+    BEGIN { unreleased=0; printed=0 }
+    /^## \[Unreleased\]/ {
+        print $0;
+        system("cat /tmp/new-changes.md");
+        unreleased=1;
+        printed=1;
+        next;
+    }
+    /^## \[/ {
+        if (unreleased && !printed) {
+        system("cat /tmp/new-changes.md");
+        printed=1;
+        }
+        unreleased=0;
+        print $0;
+        next;
+    }
+    {
+        if (!unreleased) print $0;
+    }
+    ' /tmp/changelog.tmp > CHANGELOG.md
 
 echo "Changelog updated with new entries."
