@@ -48,7 +48,7 @@ deploy-gh-pages: gh-pages-publish helm-repo-update
 
 gh-pages-publish:
 	@echo "Publishing Helm chart for $(SERVICE_NAME) to GitHub Pages..."
-	rm -rf $(LOCAL_CHART_NAME) $(LOCAL_INDEX_FILE)
+	rm -rf $(LOCAL_CHART_NAME) $(LOCAL_INDEX_FILE) /tmp/$(NAMESPACE)-*.tgz
 	helm package ./$(CHART_DIRECTORY) -d /tmp
 	helm repo index /tmp --url https://$(REMOTE_CHART_REPOSITORY)/$(SERVICE_NAME)/ --merge /tmp/index.yaml
 	git checkout gh-pages
