@@ -28,12 +28,11 @@ EOF
 # Function to get commits with their hash
 get_commits_with_hash() {
     local type=$1
-    local prefix=$2
     # Use || true to prevent non-zero exit when no matches are found
-    git log --pretty=format:"%h %s" $LATEST_TAG..HEAD | grep -E "^[a-f0-9]+ $type:" || true | while read -r line; do
+    git log --pretty=format:"%h %s" $LATEST_TAG..HEAD | grep -E "$type" || true | while read -r line; do
     if [ -n "$line" ]; then
         hash=$(echo "$line" | cut -d' ' -f1)
-        message=$(echo "$line" | sed "s/^$hash $prefix: //")
+        message=$(echo "$line" | sed "s/^$hash $type: //")
         echo "- $message ([$hash]($REPO_URL/commit/$hash))"
     fi
     done
@@ -44,9 +43,9 @@ git log --pretty=format:"%h %s" $LATEST_TAG..HEAD
 echo ""
 
 # Get commits by type
-FIXES=$(get_commits_with_hash "^[a-f0-9]+ feat:" "fix")
-FEATURES=$(get_commits_with_hash "^[a-f0-9]+ fix:" "feat")
-BREAKING=$(get_commits_with_hash "^[a-f0-9]+ BREAKING CHANGE:" "BREAKING CHANGE")
+FIXES=$(get_commits_with_hash "^[a-f0-9]+ feat:")
+FEATURES=$(get_commits_with_hash "^[a-f0-9]+ fix:")
+BREAKING=$(get_commits_with_hash "^[a-f0-9]+ BREAKING CHANGE:")
 
 # Only add sections if they have content
 if [ ! -z "$FIXES" ]; then
