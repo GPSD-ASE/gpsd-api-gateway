@@ -42,15 +42,6 @@ get_commits_with_hash() {
 echo "Raw commits since last tag:"
 git log --pretty=format:"%h %s" $LATEST_TAG..HEAD
 echo ""
-echo "Commits matching fix:"
-git log --pretty=format:"%h %s" $LATEST_TAG..HEAD | grep -E "^[a-f0-9]+ fix:"
-echo ""
-echo "Commits matching feat:"
-git log --pretty=format:"%h %s" $LATEST_TAG..HEAD | grep -E "^[a-f0-9]+ feat:"
-echo ""
-echo "Commits matching BREAKING CHANGE:"
-git log --pretty=format:"%h %s" $LATEST_TAG..HEAD | grep -E "^[a-f0-9]+ BREAKING CHANGE::"
-echo ""
 
 # Get commits by type
 FIXES=$(get_commits_with_hash "^[a-f0-9]+ feat:" "fix")
