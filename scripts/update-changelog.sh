@@ -5,11 +5,7 @@ set -e
 LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo 'v0.0.0')
 TODAY=$(date +%Y-%m-%d)
 
-ORG=$(echo $REMOTE_URL | rev | cut -d'/' -f2 | rev)
-REPO=$(echo $REMOTE_URL | rev | cut -d'/' -f1 | rev | sed 's/\.git$//')
-REPO_URL="https://github.com/$ORG/$REPO"
-
-echo "Using repository URL: $REPO_URL"
+REPO_URL="https://github.com/GPSD-ASE/gpsd-api-gateway.git"
 
 echo "Generating changelog entries since $LATEST_TAG..."
 
