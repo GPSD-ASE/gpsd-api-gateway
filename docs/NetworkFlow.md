@@ -1,7 +1,9 @@
-### Network Flow Summary GPSD Application
+### Network Flow Summary of GPSD Application
 @author: Kaaviya Ramkumar
+
 @email: prkaaviya17@gmail.com
-@date: 22.03.2-25
+
+@date: 22.03.2025
 
 
 1. **Client**: Request to gpsd.duckdns.org (External domain pointing to ip 152.53.124.121)
