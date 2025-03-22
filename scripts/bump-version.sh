@@ -32,11 +32,11 @@ awk -v old="version: $CURRENT_VERSION" -v new="version: $NEW_VERSION" '{gsub(old
 
 # Update values.yaml image tag
 VALUES_FILE="helm/values.yaml"
-awk -v old="tag: \"v$CURRENT_VERSION\"" -v new="tag: \"v$NEW_VERSION\"" '{gsub(old, new); print}' $VALUES_FILE > tmp && mv tmp $VALUES_FILE
+sed -i "s/tag: \"v$CURRENT_VERSION\"/tag: \"v$NEW_VERSION\"/" $VALUES_FILE
 
 # Update Makefile
 MAKEFILE="Makefile"
-awk -v old="TAG ?= $CURRENT_VERSION" -v new="TAG ?= $NEW_VERSION" '{gsub(old, new); print}' $MAKEFILE > tmp && mv tmp $MAKEFILE
+sed -i "s/TAG ?= $CURRENT_VERSION/TAG ?= $NEW_VERSION/" $MAKEFILE
 
 # Update CHANGELOG.md
 DATE=$(date +%Y-%m-%d)
