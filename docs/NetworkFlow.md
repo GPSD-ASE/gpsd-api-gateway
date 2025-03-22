@@ -1,46 +1,51 @@
-## Network Flow Summary
+### Network Flow Summary GPSD Application
+@author: Kaaviya Ramkumar
+@email: prkaaviya17@gmail.com
+@date: 22.03.2-25
 
-1.	Client: Request to 127.0.0.1:54987 (Minikube tunnel with Nginx service on a dynamically created port).
-   
-2.	Minikube Tunnel: Maps a local port (54987) to the Kubernetes NodePort Nginx service.
-   
-3.	Nginx Pod:
-   
-	•	The request is routed to the Nginx pod through the NodePort service.
 
-	•	Nginx acts as a reverse proxy and forwards the request to the API Gateway service.
+1. **Client**: Request to gpsd.duckdns.org (External domain pointing to ip 152.53.124.121)
 
-4.	API Gateway Service:
-   
-	•	Nginx forwards the request to the ClusterIP of the API Gateway service, which routes traffic to one of the API Gateway pods.
+2. **Traefik LoadBalancer**: 
+   - Receives traffic on port 443 (HTTPS)
+   - Handles TLS termination with Let's Encrypt certificates
+   - Routes requests based on Host header
 
-5.	API Gateway Pod:
-   
-	•	The application running inside the API Gateway pod processes the request and sends a response.
+3. **API Gateway Service**:
+   - Traefik forwards the request to the ClusterIP of the API Gateway service (gpsd-api-gateway)
+   - Service routes traffic to one of the API Gateway pods
 
-6.	Response:
-    
-	•	The response flows back from the API Gateway pod → ClusterIP → Nginx pod → Minikube tunnel → client.
+4. **API Gateway Pod**:
+   - The application running inside the API Gateway pod processes the request
+   - Communicates with other backend services (user-mgmt, map-mgmt, etc.)
+   - Authenticates with Vault for secrets
+
+5. **Response**:
+   - The response flows back from the API Gateway pod → ClusterIP → Traefik LoadBalancer → Client
 
 ### Network Pathway
+
 ```
 Client (curl/browser)
     |
     v
-127.0.0.1:54987 (Minikube Tunnel)
+gpsd.duckdns.org (DNS points to 152.53.124.121)
     |
     v
-NodePort Nginx Service (30080 on Minikube node)
+Traefik LoadBalancer (152.53.124.121:443)
     |
     v
-Nginx Pod
+ClusterIP API Gateway Service (example - 10.43.33.214:80)
     |
     v
-ClusterIP API Gateway Service (10.108.83.91)
+API Gateway Pod (example - 10.42.0.229:3000)
     |
     v
-API Gateway Pod (10.244.0.57:3000)
+Application (API Gateway: "API Gateway is running at port 3000!")
     |
     v
-Application (API Gateway: "API Gateway is running!")
+Backend Services (User Management, Map Management, etc.)
+    |
+    v
+Vault (Secret Management example - 10.43.176.90:8200)
 ```
