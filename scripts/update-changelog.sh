@@ -51,9 +51,7 @@ BREAKING=$(get_commits_with_hash "^[a-f0-9]+ BREAKING CHANGE:")
 if [ ! -z "$FIXES" ]; then
     echo -e "\n### Fixed" >> CHANGELOG.new
     echo "$FIXES" >> CHANGELOG.new
-    echo "" >> CHANGELOG.
-    
-    new  # Add a newline after section
+    echo "" >> CHANGELOG.new  # Add a newline after section
 fi
 
 if [ ! -z "$FEATURES" ]; then
