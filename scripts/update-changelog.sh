@@ -29,10 +29,13 @@ EOF
 get_commits_with_hash() {
     local type=$1
     local prefix=$2
-    git log --pretty=format:"%h %s" $LATEST_TAG..HEAD | grep -E "^[a-f0-9]+ $type:" | while read -r line; do
+    # Use || true to prevent non-zero exit when no matches are found
+    git log --pretty=format:"%h %s" $LATEST_TAG..HEAD | grep -E "^[a-f0-9]+ $type:" || true | while read -r line; do
+    if [ -n "$line" ]; then
         hash=$(echo "$line" | cut -d' ' -f1)
         message=$(echo "$line" | sed "s/^$hash $prefix: //")
         echo "- $message ([$hash]($REPO_URL/commit/$hash))"
+    fi
     done
 }
 
