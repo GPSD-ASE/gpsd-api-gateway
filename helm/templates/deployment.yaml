@@ -31,12 +31,10 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
-            - name: VAULT_ADDR
-              value: "{{ .Values.env.VAULT_ADDR }}"
-            - name: VAULT_AUTH_METHOD
-              value: "{{ .Values.env.VAULT_AUTH_METHOD }}"
-            - name: VAULT_ROLE
-              value: "{{ .Values.env.VAULT_ROLE }}"
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
             - name: VAULT_TOKEN
               valueFrom:
                 secretKeyRef:

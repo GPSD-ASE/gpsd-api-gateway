@@ -15,6 +15,7 @@ type Config struct {
 	VaultRole        string
 	VaultToken       string
 	LogLevel         string
+	APIGatewayPort   string
 	UserMgmtHost     string
 	UserMgmtPort     string
 	MapMgmtHost      string
@@ -52,6 +53,8 @@ func LoadConfig(envs []string) {
 		VaultRole:  getEnv("VAULT_ROLE", ""),
 		VaultToken: getEnv("VAULT_TOKEN", ""),
 		LogLevel:   getEnv("LOG_LEVEL", "info"),
+
+		APIGatewayPort: getEnv("API_GATEWAY_APP_PORT", "3000"),
 
 		// Service configs change dynamically based on release name
 		UserMgmtHost:     findServiceEnvVar(envs, "USER_MGMT", "SERVICE_HOST"),

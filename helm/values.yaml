@@ -4,7 +4,7 @@ replicaCount: 1
 
 image:
   repository: gpsd/gpsd-api-gateway
-  tag: "latest"
+  tag: "0.1.2"
   pullPolicy: Always
 
 livenessProbe:
@@ -45,6 +45,9 @@ ingress:
         - gpsd.duckdns.org
 
 env:
+  LOG_LEVEL: "info"
+  API_GATEWAY_ENV: "TEST"
+  API_GATEWAY_APP_PORT: "3000"
   VAULT_ADDR: "http://vault.vault.svc.cluster.local:8200"
   VAULT_AUTH_METHOD: "kubernetes"
   VAULT_ROLE: "gpsd-api-gateway"
