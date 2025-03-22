@@ -42,6 +42,7 @@ jobs:
           git add helm/Chart.yaml helm/values.yaml Makefile CHANGELOG.md
           git commit -m "chore: bump version to ${{ env.NEW_VERSION }}"
           git tag -a "v${{ env.NEW_VERSION }}" -m "Release v${{ env.NEW_VERSION }}"
+          git push origin main --tags
         
       - name: Set up docker build
         if: steps.check_changes.outputs.changes == 'true'
