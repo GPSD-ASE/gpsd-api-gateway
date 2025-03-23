@@ -38,6 +38,24 @@ clean-container:
 	@echo "Cleaning Docker container..."
 	docker rm -f mock-vault $(DEPLOYMENT)
 
+# Test commands
+.PHONY: test test-coverage test-verbose
+
+test:
+	go test ./... -count=1
+
+test-coverage:
+	go test ./... -count=1 -coverprofile=coverage/coverage.out
+	go tool cover -html=coverage.out -o coverage/coverage.html
+	@echo "Coverage report generated at coverage/ dir."
+
+test-verbose:
+	go test ./... -v -count=1
+
+test-package:
+	@echo "Running tests for package: $(PKG)"
+	go test $(PKG) -v -count=1
+
 # Kubernetes commands
 .PHONY: helm helm-uninstall helm-clean
 develop: helm-uninstall build-image push-image helm
