@@ -26,7 +26,9 @@ func ForwardRequest(w http.ResponseWriter, r *http.Request, endpoint string, mod
 		actualBody, err = io.ReadAll(r.Body)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+			if e := json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()}); e != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
 			return
 		}
 		r.Body.Close()
@@ -36,7 +38,9 @@ func ForwardRequest(w http.ResponseWriter, r *http.Request, endpoint string, mod
 		newBody, err := modifyBody(actualBody)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+			if e := json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()}); e != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
 			return
 		}
 		actualBody = newBody
@@ -45,7 +49,9 @@ func ForwardRequest(w http.ResponseWriter, r *http.Request, endpoint string, mod
 	newReq, err := http.NewRequest(r.Method, endpoint, bytes.NewBuffer(actualBody))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+		if e := json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()}); e != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -65,7 +71,9 @@ func ForwardRequest(w http.ResponseWriter, r *http.Request, endpoint string, mod
 	resp, err := client.Do(newReq)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+		if e := json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()}); e != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 		return
 	}
 	defer resp.Body.Close()
@@ -80,7 +88,9 @@ func ForwardRequest(w http.ResponseWriter, r *http.Request, endpoint string, mod
 
 	if _, err := io.Copy(w, resp.Body); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+		if e := json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()}); e != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 		return
 	}
 }

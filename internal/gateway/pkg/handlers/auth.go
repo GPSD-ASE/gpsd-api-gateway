@@ -85,7 +85,9 @@ func (h *Handler) VerifyHandler(w http.ResponseWriter, r *http.Request) {
 	authHeader := r.Header.Get("Authorization")
 	if authHeader == "" {
 		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(ErrorResponse{Error: "no token provided"})
+		if e := json.NewEncoder(w).Encode(ErrorResponse{Error: "no token provided"}); e != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -94,17 +96,24 @@ func (h *Handler) VerifyHandler(w http.ResponseWriter, r *http.Request) {
 		token = authHeader[7:]
 	} else {
 		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(ErrorResponse{Error: "invalid authorization format"})
+		if e := json.NewEncoder(w).Encode(ErrorResponse{Error: "invalid authorization format"}); e != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 		return
 	}
 
 	valid, err := VerifyToken(token)
 	if !valid || err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+		if e := json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()}); e != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"message": "valid token"})
+	if e := json.NewEncoder(w).Encode(map[string]string{"message": "valid token"}); e != nil {
+
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
