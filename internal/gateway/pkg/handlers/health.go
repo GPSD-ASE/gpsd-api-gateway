@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-
-	"gpsd-api-gateway/internal/gateway/pkg/config"
 )
 
 type VaultHealth struct {
@@ -42,8 +40,7 @@ func checkVaultHealth(vaultAddr string) *VaultHealth {
 	return &health
 }
 
-// HealthCheckHandler for HTTP-only endpoints.
-func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) NewHealthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	response := HealthResponse{
@@ -51,7 +48,7 @@ func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
 		Timestamp: time.Now().UTC().Format(time.RFC3339),
 	}
 
-	vaultHealth := checkVaultHealth(config.ApiGatewayConfig.VaultAddr)
+	vaultHealth := checkVaultHealth(h.Config.VaultAddr)
 	if vaultHealth.Error != "" || vaultHealth.Sealed {
 		response.Status = "degraded"
 	}

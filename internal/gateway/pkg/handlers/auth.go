@@ -17,19 +17,19 @@ type UserData struct {
 	Role     string `json:"role,omitempty"`
 }
 
-func getUserMgmtBaseURL() string {
+func getUserMgmtBaseURL(cc *config.Config) string {
 	return fmt.Sprintf(
 		"http://%s:%s/api/v1",
-		config.ApiGatewayConfig.UserMgmtHost,
-		config.ApiGatewayConfig.UserMgmtPort,
+		cc.UserMgmtHost,
+		cc.UserMgmtPort,
 	)
 }
 
-func RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	ForwardRequest(w, r, getUserMgmtBaseURL()+"/users", nil)
+func (h *Handler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/users", nil)
 }
 
-func RegisterAdminHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) RegisterAdminHandler(w http.ResponseWriter, r *http.Request) {
 	modifyBody := func(original []byte) ([]byte, error) {
 		var userData UserData
 		if err := json.Unmarshal(original, &userData); err != nil {
@@ -38,11 +38,11 @@ func RegisterAdminHandler(w http.ResponseWriter, r *http.Request) {
 		userData.Role = "admin"
 		return json.Marshal(userData)
 	}
-	ForwardRequest(w, r, getUserMgmtBaseURL()+"/users", modifyBody)
+	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/users", modifyBody)
 }
 
-func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	ForwardRequest(w, r, getUserMgmtBaseURL()+"/signin", nil)
+func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
+	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/signin", nil)
 }
 
 // TODO: Remove this from gpsd-api-gateway, only temporary
@@ -79,7 +79,7 @@ func VerifyToken(tokenString string) (bool, error) {
 	return true, nil
 }
 
-func VerifyHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) VerifyHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	authHeader := r.Header.Get("Authorization")

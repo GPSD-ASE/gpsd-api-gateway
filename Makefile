@@ -20,15 +20,26 @@ push-image:
 
 run-image:
 	@echo "Running Docker image $(IMAGE_NAME):v$(VERSION)..."
-	docker run -p 3000:3000 $(IMAGE_NAME):v$(VERSION)
+	docker network create gpsd-network || true
+	docker run -d --name mock-vault --network gpsd-network -p 8200:8200 hashicorp/vault:latest server -dev -dev-root-token-id=root
+	docker run -p 3000:3000 --network gpsd-network -e VAULT_ADDR=http://mock-vault:8200 -e VAULT_TOKEN=root $(IMAGE_NAME):v$(VERSION)
+
+clean: clean-container clean-network clean-image 
 
 clean-image:
 	@echo "Cleaning dangling Docker images..."
 	docker rmi $(docker images --filter "dangling=true" -q) -f
 
+clean-network:
+	@echo "Cleaning Docker network..."
+	docker network rm gpsd-network
+
+clean-container:
+	@echo "Cleaning Docker container..."
+	docker rm -f mock-vault $(DEPLOYMENT)
 
 # Kubernetes commands
-.PHONY: helm helm-uninstall clean certs develop
+.PHONY: helm helm-uninstall helm-clean
 develop: helm-uninstall build-image push-image helm
 
 helm:
@@ -39,7 +50,7 @@ helm-uninstall:
 	@echo "Uninstalling $(DEPLOYMENT) from Kubernetes..."
 	helm uninstall demo -n $(NAMESPACE) || true
 
-clean:
+helm-clean:
 	@echo "Cleaning up all resources in the $(NAMESPACE) namespace..."
 	kubectl delete all --all -n $(NAMESPACE) || true
 	kubectl delete namespace $(NAMESPACE) || true
