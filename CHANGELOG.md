@@ -7,10 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.17] - 2025-03-23
+## [0.1.18] - 2025-03-23
 
 
 ### Fixed
-f4350e4 fix: add test commands in makefile and generate coverage
-8be94c9 fix: restructure for unit tests
+e622dee fix: check return value of json encoder
+0d05f16 fix: update go tests to use 1.24
+a709648 fix: add separete jobs in release.yml
 
