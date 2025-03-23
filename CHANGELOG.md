@@ -7,11 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.18] - 2025-03-23
+## [0.1.19] - 2025-03-23
 
 
 ### Fixed
-e622dee fix: check return value of json encoder
-0d05f16 fix: update go tests to use 1.24
-a709648 fix: add separete jobs in release.yml
+4d6fd50 fix: add git setup before publishing helm chart
 
