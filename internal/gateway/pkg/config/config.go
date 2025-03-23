@@ -49,7 +49,7 @@ func LoadConfig(envs []string) *Config {
 		VaultAddr:  GetEnvVars("VAULT_ADDR", "http://127.0.0.1:8200"),
 		VaultAuth:  GetEnvVars("VAULT_AUTH_METHOD", "token"),
 		VaultRole:  GetEnvVars("VAULT_ROLE", "kubernetes"),
-		VaultToken: GetEnvVars("VAULT_TOKEN", "test"),
+		VaultToken: GetEnvVars("VAULT_TOKEN", "root"),
 		LogLevel:   GetEnvVars("LOG_LEVEL", "info"),
 
 		APIGatewayPort: GetEnvVars("API_GATEWAY_APP_PORT", "3000"),
