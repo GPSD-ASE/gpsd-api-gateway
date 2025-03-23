@@ -7,8 +7,6 @@ import (
 	"strings"
 )
 
-var ApiGatewayConfig *Config
-
 type Config struct {
 	VaultAddr        string
 	VaultAuth        string
@@ -24,7 +22,7 @@ type Config struct {
 	IncidentMgmtPort string
 }
 
-func findServiceEnvVar(envs []string, service, field string) string {
+func FindServiceEnvVar(envs []string, service, field string, def string) string {
 	suffix := fmt.Sprintf("_%s_%s", service, field)
 
 	for _, env := range envs {
@@ -42,42 +40,43 @@ func findServiceEnvVar(envs []string, service, field string) string {
 		}
 	}
 
-	return ""
+	return def
 }
 
-func LoadConfig(envs []string) {
-	ApiGatewayConfig = &Config{
+func LoadConfig(envs []string) *Config {
+	cc := &Config{
 		// Non-service configs remain the same
-		VaultAddr:  getEnv("VAULT_ADDR", "http://127.0.0.1:8200"),
-		VaultAuth:  getEnv("VAULT_AUTH_METHOD", "token"),
-		VaultRole:  getEnv("VAULT_ROLE", ""),
-		VaultToken: getEnv("VAULT_TOKEN", ""),
-		LogLevel:   getEnv("LOG_LEVEL", "info"),
+		VaultAddr:  GetEnvVars("VAULT_ADDR", "http://127.0.0.1:8200"),
+		VaultAuth:  GetEnvVars("VAULT_AUTH_METHOD", "token"),
+		VaultRole:  GetEnvVars("VAULT_ROLE", "kubernetes"),
+		VaultToken: GetEnvVars("VAULT_TOKEN", "root"),
+		LogLevel:   GetEnvVars("LOG_LEVEL", "info"),
 
-		APIGatewayPort: getEnv("API_GATEWAY_APP_PORT", "3000"),
+		APIGatewayPort: GetEnvVars("API_GATEWAY_APP_PORT", "3000"),
 
 		// Service configs change dynamically based on release name
-		UserMgmtHost:     findServiceEnvVar(envs, "USER_MGMT", "SERVICE_HOST"),
-		UserMgmtPort:     findServiceEnvVar(envs, "USER_MGMT", "SERVICE_PORT"),
-		MapMgmtHost:      findServiceEnvVar(envs, "MAP_MGMT", "SERVICE_HOST"),
-		MapMgmtPort:      findServiceEnvVar(envs, "MAP_MGMT", "SERVICE_PORT"),
-		IncidentMgmtHost: findServiceEnvVar(envs, "INCIDENT_MGMT", "SERVICE_HOST"),
-		IncidentMgmtPort: findServiceEnvVar(envs, "INCIDENT_MGMT", "SERVICE_PORT"),
+		UserMgmtHost:     FindServiceEnvVar(envs, "USER_MGMT", "SERVICE_HOST", "localhost"),
+		UserMgmtPort:     FindServiceEnvVar(envs, "USER_MGMT", "SERVICE_PORT", "5500"),
+		MapMgmtHost:      FindServiceEnvVar(envs, "MAP_MGMT", "SERVICE_HOST", "localhost"),
+		MapMgmtPort:      FindServiceEnvVar(envs, "MAP_MGMT", "SERVICE_PORT", "9000"),
+		IncidentMgmtHost: FindServiceEnvVar(envs, "INCIDENT_MGMT", "SERVICE_HOST", "localhost"),
+		IncidentMgmtPort: FindServiceEnvVar(envs, "INCIDENT_MGMT", "SERVICE_PORT", "7000"),
 	}
 
-	// TODO: Change this to log.Fatal once all deployments are updated.
-	if ApiGatewayConfig.UserMgmtHost == "" || ApiGatewayConfig.UserMgmtPort == "" {
-		log.Print("User Management service environment variables not found")
+	if cc.UserMgmtHost == "" || cc.UserMgmtPort == "" {
+		log.Fatal("User Management service environment variables not found")
 	}
-	if ApiGatewayConfig.MapMgmtHost == "" || ApiGatewayConfig.MapMgmtPort == "" {
-		log.Print("Map Management service environment variables not found")
+	if cc.MapMgmtHost == "" || cc.MapMgmtPort == "" {
+		log.Fatal("Map Management service environment variables not found")
 	}
-	if ApiGatewayConfig.IncidentMgmtHost == "" || ApiGatewayConfig.IncidentMgmtPort == "" {
-		log.Print("Incident Management service environment variables not found")
+	if cc.IncidentMgmtHost == "" || cc.IncidentMgmtPort == "" {
+		log.Fatal("Incident Management service environment variables not found")
 	}
+
+	return cc
 }
 
-func getEnv(key, defaultValue string) string {
+func GetEnvVars(key, defaultValue string) string {
 	if value, exists := os.LookupEnv(key); exists {
 		return value
 	}

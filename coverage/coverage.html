@@ -1,0 +1,708 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>config: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">gpsd-api-gateway/internal/gateway/pkg/config/config.go (85.7%)</option>
+				
+				<option value="file1">gpsd-api-gateway/internal/gateway/pkg/handlers/auth.go (0.0%)</option>
+				
+				<option value="file2">gpsd-api-gateway/internal/gateway/pkg/handlers/common.go (0.0%)</option>
+				
+				<option value="file3">gpsd-api-gateway/internal/gateway/pkg/handlers/handlers.go (100.0%)</option>
+				
+				<option value="file4">gpsd-api-gateway/internal/gateway/pkg/handlers/health.go (0.0%)</option>
+				
+				<option value="file5">gpsd-api-gateway/internal/gateway/pkg/handlers/incident.go (0.0%)</option>
+				
+				<option value="file6">gpsd-api-gateway/internal/gateway/pkg/handlers/map.go (0.0%)</option>
+				
+				<option value="file7">gpsd-api-gateway/internal/gateway/pkg/routes/routes.go (0.0%)</option>
+				
+				<option value="file8">gpsd-api-gateway/internal/main.go (0.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package config
+
+import (
+        "fmt"
+        "log"
+        "os"
+        "strings"
+)
+
+type Config struct {
+        VaultAddr        string
+        VaultAuth        string
+        VaultRole        string
+        VaultToken       string
+        LogLevel         string
+        APIGatewayPort   string
+        UserMgmtHost     string
+        UserMgmtPort     string
+        MapMgmtHost      string
+        MapMgmtPort      string
+        IncidentMgmtHost string
+        IncidentMgmtPort string
+}
+
+func FindServiceEnvVar(envs []string, service, field string, def string) string <span class="cov8" title="1">{
+        suffix := fmt.Sprintf("_%s_%s", service, field)
+
+        for _, env := range envs </span><span class="cov8" title="1">{
+                pair := strings.SplitN(env, "=", 2)
+                if len(pair) &lt; 2 </span><span class="cov8" title="1">{
+                        continue</span>
+                }
+
+                <span class="cov8" title="1">key := pair[0]
+                value := pair[1]
+
+                // If this env var ends with  target suffix (e.g., "_USER_MGMT_SERVICE_HOST")
+                if strings.HasSuffix(strings.ToUpper(key), suffix) </span><span class="cov8" title="1">{
+                        return value
+                }</span>
+        }
+
+        <span class="cov8" title="1">return def</span>
+}
+
+func LoadConfig(envs []string) *Config <span class="cov8" title="1">{
+        cc := &amp;Config{
+                // Non-service configs remain the same
+                VaultAddr:  GetEnvVars("VAULT_ADDR", "http://127.0.0.1:8200"),
+                VaultAuth:  GetEnvVars("VAULT_AUTH_METHOD", "token"),
+                VaultRole:  GetEnvVars("VAULT_ROLE", "kubernetes"),
+                VaultToken: GetEnvVars("VAULT_TOKEN", "root"),
+                LogLevel:   GetEnvVars("LOG_LEVEL", "info"),
+
+                APIGatewayPort: GetEnvVars("API_GATEWAY_APP_PORT", "3000"),
+
+                // Service configs change dynamically based on release name
+                UserMgmtHost:     FindServiceEnvVar(envs, "USER_MGMT", "SERVICE_HOST", "localhost"),
+                UserMgmtPort:     FindServiceEnvVar(envs, "USER_MGMT", "SERVICE_PORT", "5500"),
+                MapMgmtHost:      FindServiceEnvVar(envs, "MAP_MGMT", "SERVICE_HOST", "localhost"),
+                MapMgmtPort:      FindServiceEnvVar(envs, "MAP_MGMT", "SERVICE_PORT", "9000"),
+                IncidentMgmtHost: FindServiceEnvVar(envs, "INCIDENT_MGMT", "SERVICE_HOST", "localhost"),
+                IncidentMgmtPort: FindServiceEnvVar(envs, "INCIDENT_MGMT", "SERVICE_PORT", "7000"),
+        }
+
+        if cc.UserMgmtHost == "" || cc.UserMgmtPort == "" </span><span class="cov0" title="0">{
+                log.Fatal("User Management service environment variables not found")
+        }</span>
+        <span class="cov8" title="1">if cc.MapMgmtHost == "" || cc.MapMgmtPort == "" </span><span class="cov0" title="0">{
+                log.Fatal("Map Management service environment variables not found")
+        }</span>
+        <span class="cov8" title="1">if cc.IncidentMgmtHost == "" || cc.IncidentMgmtPort == "" </span><span class="cov0" title="0">{
+                log.Fatal("Incident Management service environment variables not found")
+        }</span>
+
+        <span class="cov8" title="1">return cc</span>
+}
+
+func GetEnvVars(key, defaultValue string) string <span class="cov8" title="1">{
+        if value, exists := os.LookupEnv(key); exists </span><span class="cov8" title="1">{
+                return value
+        }</span>
+        <span class="cov8" title="1">return defaultValue</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package handlers
+
+import (
+        "encoding/json"
+        "fmt"
+        "net/http"
+        "strings"
+        "time"
+
+        "gpsd-api-gateway/internal/gateway/pkg/config"
+
+        "github.com/golang-jwt/jwt/v5"
+)
+
+type UserData struct {
+        Username string `json:"username"`
+        Role     string `json:"role,omitempty"`
+}
+
+func getUserMgmtBaseURL(cc *config.Config) string <span class="cov0" title="0">{
+        return fmt.Sprintf(
+                "http://%s:%s/api/v1",
+                cc.UserMgmtHost,
+                cc.UserMgmtPort,
+        )
+}</span>
+
+func (h *Handler) RegisterHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/users", nil)
+}</span>
+
+func (h *Handler) RegisterAdminHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        modifyBody := func(original []byte) ([]byte, error) </span><span class="cov0" title="0">{
+                var userData UserData
+                if err := json.Unmarshal(original, &amp;userData); err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+                <span class="cov0" title="0">userData.Role = "admin"
+                return json.Marshal(userData)</span>
+        }
+        <span class="cov0" title="0">ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/users", modifyBody)</span>
+}
+
+func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/signin", nil)
+}</span>
+
+// TODO: Remove this from gpsd-api-gateway, only temporary
+var secretKey = []byte("secret key")
+
+func VerifyToken(tokenString string) (bool, error) <span class="cov0" title="0">{
+        var errStr error = fmt.Errorf("invalid token")
+
+        token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) </span><span class="cov0" title="0">{
+                return secretKey, nil
+        }</span>)
+        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                return false, errStr
+        }</span>
+
+        <span class="cov0" title="0">if !token.Valid </span><span class="cov0" title="0">{
+                return false, errStr
+        }</span>
+
+        <span class="cov0" title="0">claims, ok := token.Claims.(jwt.MapClaims)
+        if !ok </span><span class="cov0" title="0">{
+                return false, errStr
+        }</span>
+
+        <span class="cov0" title="0">exp, ok := claims["exp"].(float64)
+        if !ok </span><span class="cov0" title="0">{
+                return false, errStr
+        }</span>
+
+        <span class="cov0" title="0">if time.Now().Unix() &gt; int64(exp) </span><span class="cov0" title="0">{
+                return false, errStr
+        }</span>
+
+        <span class="cov0" title="0">return true, nil</span>
+}
+
+func (h *Handler) VerifyHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        w.Header().Set("Content-Type", "application/json")
+
+        authHeader := r.Header.Get("Authorization")
+        if authHeader == "" </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusUnauthorized)
+                json.NewEncoder(w).Encode(ErrorResponse{Error: "no token provided"})
+                return
+        }</span>
+
+        <span class="cov0" title="0">token := ""
+        if len(authHeader) &gt; 7 &amp;&amp; strings.HasPrefix(authHeader, "Bearer ") </span><span class="cov0" title="0">{
+                token = authHeader[7:]
+        }</span> else<span class="cov0" title="0"> {
+                w.WriteHeader(http.StatusUnauthorized)
+                json.NewEncoder(w).Encode(ErrorResponse{Error: "invalid authorization format"})
+                return
+        }</span>
+
+        <span class="cov0" title="0">valid, err := VerifyToken(token)
+        if !valid || err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusUnauthorized)
+                json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">w.WriteHeader(http.StatusOK)
+        json.NewEncoder(w).Encode(map[string]string{"message": "valid token"})</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package handlers
+
+import (
+        "bytes"
+        "encoding/json"
+        "io"
+        "net/http"
+        "time"
+)
+
+var client = &amp;http.Client{
+        Timeout: 10 * time.Second,
+}
+
+type ErrorResponse struct {
+        Error string `json:"error"`
+}
+
+func ForwardRequest(w http.ResponseWriter, r *http.Request, endpoint string, modifyBody func([]byte) ([]byte, error)) <span class="cov0" title="0">{
+        w.Header().Set("Content-Type", "application/json")
+
+        var err error
+        var actualBody []byte
+
+        if r.Body != nil </span><span class="cov0" title="0">{
+                actualBody, err = io.ReadAll(r.Body)
+                if err != nil </span><span class="cov0" title="0">{
+                        w.WriteHeader(http.StatusBadRequest)
+                        json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+                        return
+                }</span>
+                <span class="cov0" title="0">r.Body.Close()</span>
+        }
+
+        <span class="cov0" title="0">if modifyBody != nil </span><span class="cov0" title="0">{
+                newBody, err := modifyBody(actualBody)
+                if err != nil </span><span class="cov0" title="0">{
+                        w.WriteHeader(http.StatusBadRequest)
+                        json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+                        return
+                }</span>
+                <span class="cov0" title="0">actualBody = newBody</span>
+        }
+
+        <span class="cov0" title="0">newReq, err := http.NewRequest(r.Method, endpoint, bytes.NewBuffer(actualBody))
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">newReq.Header.Set("Content-Type", "application/json")
+        if auth := r.Header.Get("Authorization"); auth != "" </span><span class="cov0" title="0">{
+                newReq.Header.Set("Authorization", auth)
+        }</span>
+
+        <span class="cov0" title="0">for name, values := range r.Header </span><span class="cov0" title="0">{
+                if name != "Content-Length" &amp;&amp; name != "Transfer-Encoding" &amp;&amp; name != "Connection" </span><span class="cov0" title="0">{
+                        for _, value := range values </span><span class="cov0" title="0">{
+                                newReq.Header.Add(name, value)
+                        }</span>
+                }
+        }
+
+        <span class="cov0" title="0">resp, err := client.Do(newReq)
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+                return
+        }</span>
+        <span class="cov0" title="0">defer resp.Body.Close()
+
+        for key, values := range resp.Header </span><span class="cov0" title="0">{
+                for _, value := range values </span><span class="cov0" title="0">{
+                        w.Header().Add(key, value)
+                }</span>
+        }
+
+        <span class="cov0" title="0">w.WriteHeader(resp.StatusCode)
+
+        if _, err := io.Copy(w, resp.Body); err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+                return
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package handlers
+
+import "gpsd-api-gateway/internal/gateway/pkg/config"
+
+type Handler struct {
+        Config *config.Config
+}
+
+func NewHandler(cc *config.Config) *Handler <span class="cov8" title="1">{
+        return &amp;Handler{Config: cc}
+}</span>
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package handlers
+
+import (
+        "encoding/json"
+        "fmt"
+        "net/http"
+        "time"
+)
+
+type VaultHealth struct {
+        Initialized bool   `json:"initialized"`
+        Sealed      bool   `json:"sealed"`
+        Standby     bool   `json:"standby"`
+        Error       string `json:"error,omitempty"`
+}
+type HealthResponse struct {
+        Status      string       `json:"status"`
+        Timestamp   string       `json:"timestamp"`
+        VaultStatus *VaultHealth `json:"vault_status,omitempty"`
+}
+
+func checkVaultHealth(vaultAddr string) *VaultHealth <span class="cov0" title="0">{
+        client := &amp;http.Client{
+                Timeout: 5 * time.Second,
+        }
+
+        resp, err := client.Get(fmt.Sprintf("%s/v1/sys/health", vaultAddr))
+        if err != nil </span><span class="cov0" title="0">{
+                return &amp;VaultHealth{
+                        Error: fmt.Sprintf("Failed to connect to Vault: %v", err),
+                }
+        }</span>
+        <span class="cov0" title="0">defer resp.Body.Close()
+
+        var health VaultHealth
+        if err := json.NewDecoder(resp.Body).Decode(&amp;health); err != nil </span><span class="cov0" title="0">{
+                health.Error = fmt.Sprintf("Failed to decode Vault response: %v", err)
+        }</span>
+
+        <span class="cov0" title="0">return &amp;health</span>
+}
+
+func (h *Handler) NewHealthCheckHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        w.Header().Set("Content-Type", "application/json")
+
+        response := HealthResponse{
+                Status:    "ok",
+                Timestamp: time.Now().UTC().Format(time.RFC3339),
+        }
+
+        vaultHealth := checkVaultHealth(h.Config.VaultAddr)
+        if vaultHealth.Error != "" || vaultHealth.Sealed </span><span class="cov0" title="0">{
+                response.Status = "degraded"
+        }</span>
+        <span class="cov0" title="0">response.VaultStatus = vaultHealth
+
+        if response.Status == "ok" </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusOK)
+        }</span> else<span class="cov0" title="0"> {
+                w.WriteHeader(http.StatusServiceUnavailable)
+        }</span>
+
+        <span class="cov0" title="0">if err := json.NewEncoder(w).Encode(response); err != nil </span><span class="cov0" title="0">{
+                http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+                return
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package handlers
+
+import (
+        "fmt"
+        "net/http"
+
+        "gpsd-api-gateway/internal/gateway/pkg/config"
+
+        "github.com/gorilla/mux"
+)
+
+func getIncidentMgmtBaseURL(cc *config.Config) string <span class="cov0" title="0">{
+        return fmt.Sprintf(
+                "http://%s:%s/api",
+                cc.IncidentMgmtHost,
+                cc.IncidentMgmtPort,
+        )
+}</span>
+
+func (h *Handler) GetAllIncidentsHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        ForwardRequest(w, r, getIncidentMgmtBaseURL(h.Config)+"/incidents", nil)
+}</span>
+
+func (h *Handler) CreateIncidentHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        ForwardRequest(w, r, getIncidentMgmtBaseURL(h.Config)+"/incidents", nil)
+}</span>
+
+func (h *Handler) GetIncidentByIdHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        vars := mux.Vars(r)
+        id := vars["id"]
+        ForwardRequest(w, r, getIncidentMgmtBaseURL(h.Config)+"/incidents/"+id, nil)
+}</span>
+
+func (h *Handler) DeleteIncidentHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        vars := mux.Vars(r)
+        id := vars["id"]
+        ForwardRequest(w, r, getIncidentMgmtBaseURL(h.Config)+"/incidents/"+id, nil)
+}</span>
+
+func (h *Handler) ChangeIncidentStatusHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        vars := mux.Vars(r)
+        id := vars["id"]
+        status := vars["status"]
+        ForwardRequest(w, r, getIncidentMgmtBaseURL(h.Config)+"/incidents/"+id+"/status/"+status, nil)
+}</span>
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package handlers
+
+import (
+        "fmt"
+        "net/http"
+
+        "gpsd-api-gateway/internal/gateway/pkg/config"
+)
+
+func getMapMgmtBaseURL(cc *config.Config) string <span class="cov0" title="0">{
+        return fmt.Sprintf(
+                "http://%s:%s/api/v1",
+                cc.MapMgmtHost,
+                cc.MapMgmtPort,
+        )
+}</span>
+
+func (h *Handler) ZonesHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        ForwardRequest(w, r, getMapMgmtBaseURL(h.Config)+"/zones", nil)
+}</span>
+
+func (h *Handler) RoutingHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        ForwardRequest(w, r, getMapMgmtBaseURL(h.Config)+"/routing", nil)
+}</span>
+
+func (h *Handler) EvacuationHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        ForwardRequest(w, r, getMapMgmtBaseURL(h.Config)+"/evacuation", nil)
+}</span>
+
+func (h *Handler) TrafficHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        ForwardRequest(w, r, getMapMgmtBaseURL(h.Config)+"/traffic", nil)
+}</span>
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package routes
+
+import (
+        "gpsd-api-gateway/internal/gateway/pkg/config"
+        "gpsd-api-gateway/internal/gateway/pkg/handlers"
+
+        "github.com/gorilla/mux"
+)
+
+func RegisterRoutes(cc *config.Config, r *mux.Router) <span class="cov0" title="0">{
+        handler := handlers.NewHandler(cc)
+
+        // Health check routes
+        r.HandleFunc("/health", handler.NewHealthCheckHandler)
+        r.HandleFunc("/ready", handler.NewHealthCheckHandler)
+
+        // User routes
+        r.HandleFunc("/register", handler.RegisterHandler).Methods("POST")
+        r.HandleFunc("/register-admin", handler.RegisterAdminHandler).Methods("POST")
+        r.HandleFunc("/login", handler.LoginHandler).Methods("POST")
+        r.HandleFunc("/verify", handler.VerifyHandler).Methods("GET")
+
+        // Map routes
+        r.HandleFunc("/zones", handler.ZonesHandler).Methods("GET")
+        r.HandleFunc("/routing", handler.RoutingHandler).Methods("GET")
+        r.HandleFunc("/evacuation", handler.EvacuationHandler).Methods("POST")
+        r.HandleFunc("/traffic", handler.TrafficHandler).Methods("GET")
+
+        // Incident routes
+        r.HandleFunc("/incidents", handler.GetAllIncidentsHandler).Methods("GET")
+        r.HandleFunc("/incidents", handler.CreateIncidentHandler).Methods("POST")
+        r.HandleFunc("/incidents/{id}", handler.GetIncidentByIdHandler).Methods("GET")
+        r.HandleFunc("/incidents/{id}", handler.DeleteIncidentHandler).Methods("DELETE")
+        r.HandleFunc("/incidents/{id}/status/{status}", handler.ChangeIncidentStatusHandler).Methods("PATCH")
+}</span>
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package main
+
+import (
+        "context"
+        "gpsd-api-gateway/internal/gateway/pkg/config"
+        "gpsd-api-gateway/internal/gateway/pkg/routes"
+        "log"
+        "net/http"
+        "os"
+        "os/signal"
+        "syscall"
+        "time"
+
+        "github.com/gorilla/mux"
+)
+
+type App struct {
+        server *http.Server
+        cc     *config.Config
+}
+
+func NewApp() *App <span class="cov0" title="0">{
+        return &amp;App{}
+}</span>
+
+func (a *App) Initialize(envs []string) <span class="cov0" title="0">{
+        log.Println("Initializing API gateway...")
+        a.cc = config.LoadConfig(envs)
+        a.server = SetupServer(a.cc)
+        log.Printf("Vault running on host %s", a.cc.VaultAddr)
+}</span>
+
+func (a *App) Run() error <span class="cov0" title="0">{
+        serverErrors := make(chan error, 1)
+
+        go func() </span><span class="cov0" title="0">{
+                log.Printf("API Gateway listening on port %s", a.cc.APIGatewayPort)
+                serverErrors &lt;- a.server.ListenAndServe()
+        }</span>()
+
+        <span class="cov0" title="0">shutdown := make(chan os.Signal, 1)
+        signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
+
+        select </span>{
+        case err := &lt;-serverErrors:<span class="cov0" title="0">
+                return err</span>
+
+        case &lt;-shutdown:<span class="cov0" title="0">
+                log.Println("Starting shutdown...")
+
+                ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+                defer cancel()
+
+                err := a.server.Shutdown(ctx)
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Printf("Graceful shutdown did not complete in time: %v", err)
+
+                        if err := a.server.Close(); err != nil </span><span class="cov0" title="0">{
+                                log.Printf("Error during forced shutdown: %v", err)
+                        }</span>
+                }
+
+                <span class="cov0" title="0">log.Println("Shutdown complete.")
+                return nil</span>
+        }
+}
+
+func (a *App) Shutdown(timeout time.Duration) error <span class="cov0" title="0">{
+        ctx, cancel := context.WithTimeout(context.Background(), timeout)
+        defer cancel()
+
+        return a.server.Shutdown(ctx)
+}</span>
+
+func SetupServer(cc *config.Config) *http.Server <span class="cov0" title="0">{
+        router := setupRoutes(cc)
+
+        return &amp;http.Server{
+                Addr:         ":" + cc.APIGatewayPort,
+                Handler:      router,
+                ReadTimeout:  10 * time.Second,
+                WriteTimeout: 10 * time.Second,
+                IdleTimeout:  120 * time.Second,
+        }
+}</span>
+
+func setupRoutes(cc *config.Config) *mux.Router <span class="cov0" title="0">{
+        r := mux.NewRouter()
+        routes.RegisterRoutes(cc, r)
+        return r
+}</span>
+
+func Main() error <span class="cov0" title="0">{
+        app := NewApp()
+        app.Initialize(os.Environ())
+        return app.Run()
+}</span>
+
+func main() <span class="cov0" title="0">{
+        if err := Main(); err != nil </span><span class="cov0" title="0">{
+                log.Fatalf("Error: %v", err)
+        }</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

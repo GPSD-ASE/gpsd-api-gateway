@@ -9,37 +9,37 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func getIncidentMgmtBaseURL() string {
+func getIncidentMgmtBaseURL(cc *config.Config) string {
 	return fmt.Sprintf(
 		"http://%s:%s/api",
-		config.ApiGatewayConfig.IncidentMgmtHost,
-		config.ApiGatewayConfig.IncidentMgmtPort,
+		cc.IncidentMgmtHost,
+		cc.IncidentMgmtPort,
 	)
 }
 
-func GetAllIncidentsHandler(w http.ResponseWriter, r *http.Request) {
-	ForwardRequest(w, r, getIncidentMgmtBaseURL()+"/incidents", nil)
+func (h *Handler) GetAllIncidentsHandler(w http.ResponseWriter, r *http.Request) {
+	ForwardRequest(w, r, getIncidentMgmtBaseURL(h.Config)+"/incidents", nil)
 }
 
-func CreateIncidentHandler(w http.ResponseWriter, r *http.Request) {
-	ForwardRequest(w, r, getIncidentMgmtBaseURL()+"/incidents", nil)
+func (h *Handler) CreateIncidentHandler(w http.ResponseWriter, r *http.Request) {
+	ForwardRequest(w, r, getIncidentMgmtBaseURL(h.Config)+"/incidents", nil)
 }
 
-func GetIncidentByIdHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetIncidentByIdHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	ForwardRequest(w, r, getIncidentMgmtBaseURL()+"/incidents/"+id, nil)
+	ForwardRequest(w, r, getIncidentMgmtBaseURL(h.Config)+"/incidents/"+id, nil)
 }
 
-func DeleteIncidentHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) DeleteIncidentHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	ForwardRequest(w, r, getIncidentMgmtBaseURL()+"/incidents/"+id, nil)
+	ForwardRequest(w, r, getIncidentMgmtBaseURL(h.Config)+"/incidents/"+id, nil)
 }
 
-func ChangeIncidentStatusHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) ChangeIncidentStatusHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 	status := vars["status"]
-	ForwardRequest(w, r, getIncidentMgmtBaseURL()+"/incidents/"+id+"/status/"+status, nil)
+	ForwardRequest(w, r, getIncidentMgmtBaseURL(h.Config)+"/incidents/"+id+"/status/"+status, nil)
 }
