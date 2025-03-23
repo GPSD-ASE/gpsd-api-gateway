@@ -46,7 +46,7 @@ test:
 
 test-coverage:
 	go test ./... -count=1 -coverprofile=coverage/coverage.out
-	go tool cover -html=coverage.out -o coverage/coverage.html
+	go tool cover -html=coverage/coverage.out -o coverage/coverage.html
 	@echo "Coverage report generated at coverage/ dir."
 
 test-verbose:
