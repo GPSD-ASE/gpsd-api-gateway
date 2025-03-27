@@ -7,11 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.20] - 2025-03-27
+## [0.1.21] - 2025-03-27
 
 
 ### Fixed
-6421ac4 fix: change setupRoutes return type
-e543649 fix: go mod tidy
-5f99528 fix: routes with user and cors middleware
+0a3b96f fix: change role to 2 and correct version in docker push
 
