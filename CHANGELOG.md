@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.21] - 2025-03-27
+## [0.1.22] - 2025-03-27
 
 
 ### Fixed
-0a3b96f fix: change role to 2 and correct version in docker push
+745f78e fix: actions debug
 
