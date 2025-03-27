@@ -85,7 +85,7 @@ func SetupServer(cc *config.Config) *http.Server {
 	}
 }
 
-func setupRoutes(cc *config.Config) *mux.Router {
+func setupRoutes(cc *config.Config) http.Handler {
 	r := mux.NewRouter()
 	routes.RegisterRoutes(cc, r)
 
