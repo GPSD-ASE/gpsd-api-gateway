@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.19] - 2025-03-23
+## [0.1.20] - 2025-03-27
 
 
 ### Fixed
-4d6fd50 fix: add git setup before publishing helm chart
+6421ac4 fix: change setupRoutes return type
+e543649 fix: go mod tidy
+5f99528 fix: routes with user and cors middleware
 

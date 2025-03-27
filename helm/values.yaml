@@ -4,7 +4,7 @@ replicaCount: 1
 
 image:
   repository: gpsd/gpsd-api-gateway
-  tag: v0.1.19
+  tag: v0.1.20
   pullPolicy: Always
 
 livenessProbe:
