@@ -122,7 +122,7 @@ jobs:
           push: true
           tags: |
             gpsd/gpsd-api-gateway:latest
-            gpsd/gpsd-api-gateway:v${{ needs.check-version.outputs.new_version }}
+            gpsd/gpsd-api-gateway:v${{ env.NEW_VERSION }}
       
       - name: Scan image for vulnerabilities
         uses: aquasecurity/trivy-action@master
