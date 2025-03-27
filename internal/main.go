@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 type App struct {
@@ -87,7 +88,17 @@ func SetupServer(cc *config.Config) *http.Server {
 func setupRoutes(cc *config.Config) *mux.Router {
 	r := mux.NewRouter()
 	routes.RegisterRoutes(cc, r)
-	return r
+
+	/* Add a CORS middleware to the router */
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization", "X-Requested-With"},
+		AllowCredentials: true,
+		MaxAge:           86400,
+	})
+
+	return c.Handler(r)
 }
 
 func Main() error {

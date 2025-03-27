@@ -14,11 +14,18 @@ func RegisterRoutes(cc *config.Config, r *mux.Router) {
 	r.HandleFunc("/health", handler.NewHealthCheckHandler)
 	r.HandleFunc("/ready", handler.NewHealthCheckHandler)
 
-	// User routes
+	// Auth routes
 	r.HandleFunc("/register", handler.RegisterHandler).Methods("POST")
 	r.HandleFunc("/register-admin", handler.RegisterAdminHandler).Methods("POST")
-	r.HandleFunc("/login", handler.LoginHandler).Methods("POST")
+	r.HandleFunc("/signin", handler.SigninHandler).Methods("POST")
+	r.HandleFunc("/signin", handler.SignoutHandler).Methods("POST")
 	r.HandleFunc("/verify", handler.VerifyHandler).Methods("GET")
+
+	// User routes
+	r.HandleFunc("/users", handler.GetUsersHandler).Methods("GET")
+	r.HandleFunc("/users/{id}", handler.GetUserByIdHandler).Methods("GET")
+	r.HandleFunc("/users/{id}", handler.UpdateUserHandler).Methods("PATCH")
+	r.HandleFunc("/users/{id}", handler.DeleteUserHandler).Methods("DELETE")
 
 	// Map routes
 	r.HandleFunc("/zones", handler.ZonesHandler).Methods("GET")

@@ -10,6 +10,7 @@ import (
 	"gpsd-api-gateway/internal/gateway/pkg/config"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/gorilla/mux"
 )
 
 type UserData struct {
@@ -26,7 +27,7 @@ func getUserMgmtBaseURL(cc *config.Config) string {
 }
 
 func (h *Handler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/users", nil)
+	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/api/v1/users", nil)
 }
 
 func (h *Handler) RegisterAdminHandler(w http.ResponseWriter, r *http.Request) {
@@ -38,11 +39,15 @@ func (h *Handler) RegisterAdminHandler(w http.ResponseWriter, r *http.Request) {
 		userData.Role = "admin"
 		return json.Marshal(userData)
 	}
-	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/users", modifyBody)
+	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/api/v1/users", modifyBody)
 }
 
-func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
-	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/signin", nil)
+func (h *Handler) SigninHandler(w http.ResponseWriter, r *http.Request) {
+	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/api/v1/signin", nil)
+}
+
+func (h *Handler) SignoutHandler(w http.ResponseWriter, r *http.Request) {
+	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/api/v1/signout", nil)
 }
 
 // TODO: Remove this from gpsd-api-gateway, only temporary
@@ -116,4 +121,26 @@ func (h *Handler) VerifyHandler(w http.ResponseWriter, r *http.Request) {
 
 		w.WriteHeader(http.StatusInternalServerError)
 	}
+}
+
+func (h *Handler) GetUsersHandler(w http.ResponseWriter, r *http.Request) {
+	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/api/v1/users", nil)
+}
+
+func (h *Handler) GetUserByIdHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/api/v1/users"+id, nil)
+}
+
+func (h *Handler) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/api/v1/users"+id, nil)
+}
+
+func (h *Handler) DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/api/v1/users"+id, nil)
 }
