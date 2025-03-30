@@ -27,7 +27,7 @@ func getUserMgmtBaseURL(cc *config.Config) string {
 }
 
 func (h *Handler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/api/v1/users", nil)
+	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/users", nil)
 }
 
 func (h *Handler) RegisterAdminHandler(w http.ResponseWriter, r *http.Request) {
@@ -39,15 +39,15 @@ func (h *Handler) RegisterAdminHandler(w http.ResponseWriter, r *http.Request) {
 		userData.Role = "2"
 		return json.Marshal(userData)
 	}
-	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/api/v1/users", modifyBody)
+	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/users", modifyBody)
 }
 
 func (h *Handler) SigninHandler(w http.ResponseWriter, r *http.Request) {
-	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/api/v1/signin", nil)
+	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/signin", nil)
 }
 
 func (h *Handler) SignoutHandler(w http.ResponseWriter, r *http.Request) {
-	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/api/v1/signout", nil)
+	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/signout", nil)
 }
 
 // TODO: Remove this from gpsd-api-gateway, only temporary
