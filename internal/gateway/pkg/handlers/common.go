@@ -48,7 +48,7 @@ func ForwardRequest(w http.ResponseWriter, r *http.Request, endpoint string, mod
 	}
 
 	newReq, err := http.NewRequest(r.Method, endpoint, bytes.NewBuffer(actualBody))
-	log.Printf("FORWARDING REQUEST: %s %s -> %s", newReq.Method, newReq.URL.Path, endpoint)
+	log.Printf("FORWARDING REQUEST: %s %s -> %s %s", r.Method, r.URL.String(), newReq.Method, newReq.URL.String())
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
