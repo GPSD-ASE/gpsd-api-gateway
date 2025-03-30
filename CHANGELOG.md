@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.22] - 2025-03-27
+## [0.1.23] - 2025-03-30
 
 
 ### Fixed
-745f78e fix: actions debug
+4e458d8 fix: new_version not reflecting in pipeline
 
