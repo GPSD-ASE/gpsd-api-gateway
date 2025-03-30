@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.25] - 2025-03-30
+## [0.1.26] - 2025-03-30
 
 
 ### Fixed
-5d90dba fix: change users forwarding api
+ba3452c fix: add more logging and correct users api
 
