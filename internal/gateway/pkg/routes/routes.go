@@ -3,11 +3,15 @@ package routes
 import (
 	"gpsd-api-gateway/internal/gateway/pkg/config"
 	"gpsd-api-gateway/internal/gateway/pkg/handlers"
+	"gpsd-api-gateway/internal/gateway/pkg/middleware"
 
 	"github.com/gorilla/mux"
 )
 
 func RegisterRoutes(cc *config.Config, r *mux.Router) {
+
+	r.Use(middleware.RequestLogger)
+
 	handler := handlers.NewHandler(cc)
 
 	// Health check routes
@@ -18,7 +22,7 @@ func RegisterRoutes(cc *config.Config, r *mux.Router) {
 	r.HandleFunc("/register", handler.RegisterHandler).Methods("POST")
 	r.HandleFunc("/register-admin", handler.RegisterAdminHandler).Methods("POST")
 	r.HandleFunc("/signin", handler.SigninHandler).Methods("POST")
-	r.HandleFunc("/signin", handler.SignoutHandler).Methods("POST")
+	r.HandleFunc("/signout", handler.SignoutHandler).Methods("POST")
 	r.HandleFunc("/verify", handler.VerifyHandler).Methods("GET")
 
 	// User routes

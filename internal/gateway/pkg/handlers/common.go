@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 	"time"
 )
@@ -47,6 +48,8 @@ func ForwardRequest(w http.ResponseWriter, r *http.Request, endpoint string, mod
 	}
 
 	newReq, err := http.NewRequest(r.Method, endpoint, bytes.NewBuffer(actualBody))
+	log.Printf("FORWARDING REQUEST: %s %s -> %s", newReq.Method, newReq.URL.Path, endpoint)
+
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		if e := json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()}); e != nil {
@@ -77,6 +80,8 @@ func ForwardRequest(w http.ResponseWriter, r *http.Request, endpoint string, mod
 		return
 	}
 	defer resp.Body.Close()
+
+	log.Printf("RESPONSE FROM %s: Status=%d", endpoint, resp.StatusCode)
 
 	for key, values := range resp.Header {
 		for _, value := range values {
