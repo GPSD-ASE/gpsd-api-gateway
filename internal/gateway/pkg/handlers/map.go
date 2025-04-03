@@ -9,7 +9,7 @@ import (
 
 func getMapMgmtBaseURL(cc *config.Config) string {
 	return fmt.Sprintf(
-		"http://%s:%s/api/v1",
+		"http://%s:%s",
 		cc.MapMgmtHost,
 		cc.MapMgmtPort,
 	)
