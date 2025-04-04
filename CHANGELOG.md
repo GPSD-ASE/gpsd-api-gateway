@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.27] - 2025-04-03
+## [0.1.28] - 2025-04-04
 
 
 ### Fixed
-81280aa fix: remove /api/v1 from map mgmt apis
+08a0290 fix: Create contributions.md
 
