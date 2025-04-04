@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.29] - 2025-04-04
+## [0.1.30] - 2025-04-04
 
 
 ### Fixed
-e312291 fix: Update and rename contributions.md to Contributions.md
+464f577 fix: Update CICD.md
 
