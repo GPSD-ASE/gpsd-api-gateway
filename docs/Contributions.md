@@ -1,5 +1,8 @@
 @author: Kaaviya Ramkumar
-@date_created: 04.04.2024
+
+@email: prkaaviya17@gmail.com
+
+@date: 04.04.2024
 
 ## Functions of API Gateway
 
