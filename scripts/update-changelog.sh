@@ -51,26 +51,26 @@ BREAKING=$(get_commits_with_hash "^[a-f0-9]+ BREAKING CHANGE:")
 # Only add sections if they have content
 if [ ! -z "$FIXES" ]; then
     echo -e "\n### Fixed" >> CHANGELOG.new
-    echo "$FIXES" >> CHANGELOG.new
+    echo "\n$FIXES" >> CHANGELOG.new
     echo "" >> CHANGELOG.new  # Add a newline after section
 fi
 
 if [ ! -z "$FEATURES" ]; then
     echo -e "\n### Added" >> CHANGELOG.new
-    echo "$FEATURES" >> CHANGELOG.new
+    echo "\n$FEATURES" >> CHANGELOG.new
     echo "" >> CHANGELOG.new  # Add a newline after section
 fi
 
 if [ ! -z "$BREAKING" ]; then
     echo -e "\n### Breaking Changes" >> CHANGELOG.new
-    echo "$BREAKING" >> CHANGELOG.new
+    echo "\n$BREAKING" >> CHANGELOG.new
     echo "" >> CHANGELOG.new  # Add a newline after section
 fi
 
 # If no changes were found, add a placeholder
 if [ -z "$FEATURES" ] && [ -z "$FIXES" ] && [ -z "$BREAKING" ]; then
     echo -e "\n### Maintenance" >> CHANGELOG.new
-    echo "- Minor updates and improvements" >> CHANGELOG.new
+    echo "\n- Minor updates and improvements" >> CHANGELOG.new
     echo "" >> CHANGELOG.new  # Add a newline after section
 fi
 
