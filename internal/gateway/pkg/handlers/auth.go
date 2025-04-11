@@ -36,7 +36,7 @@ func (h *Handler) RegisterAdminHandler(w http.ResponseWriter, r *http.Request) {
 		if err := json.Unmarshal(original, &userData); err != nil {
 			return nil, err
 		}
-		userData.Role = "2"
+		userData.Role = "1"
 		return json.Marshal(userData)
 	}
 	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/users", modifyBody)
