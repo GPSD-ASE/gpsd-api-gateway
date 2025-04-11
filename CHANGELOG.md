@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.30] - 2025-04-04
+## [0.1.31] - 2025-04-11
 
 
 ### Fixed
-464f577 fix: Update CICD.md
+\n21d9648 fix: add refresh in makefile
+7431244 fix: changelog formatting
+0f06631 fix: lint
 
