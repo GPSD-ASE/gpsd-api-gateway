@@ -15,18 +15,30 @@ func getMapMgmtBaseURL(cc *config.Config) string {
 	)
 }
 
-func (h *Handler) ZonesHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetZonesHandler(w http.ResponseWriter, r *http.Request) {
 	ForwardRequest(w, r, getMapMgmtBaseURL(h.Config)+"/zones", nil)
 }
 
-func (h *Handler) RoutingHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetRouteHandler(w http.ResponseWriter, r *http.Request) {
+	ForwardRequest(w, r, getMapMgmtBaseURL(h.Config)+"/route", nil)
+}
+
+func (h *Handler) GetRoutingHandler(w http.ResponseWriter, r *http.Request) {
 	ForwardRequest(w, r, getMapMgmtBaseURL(h.Config)+"/routing", nil)
 }
 
-func (h *Handler) EvacuationHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) PostEvacuationHandler(w http.ResponseWriter, r *http.Request) {
 	ForwardRequest(w, r, getMapMgmtBaseURL(h.Config)+"/evacuation", nil)
 }
 
 func (h *Handler) TrafficHandler(w http.ResponseWriter, r *http.Request) {
 	ForwardRequest(w, r, getMapMgmtBaseURL(h.Config)+"/traffic", nil)
+}
+
+func (h *Handler) GetSafezonesHandler(w http.ResponseWriter, r *http.Request) {
+	ForwardRequest(w, r, getMapMgmtBaseURL(h.Config)+"/safezones", nil)
+}
+
+func (h *Handler) PostSafezonesHandler(w http.ResponseWriter, r *http.Request) {
+	ForwardRequest(w, r, getMapMgmtBaseURL(h.Config)+"/safezones", nil)
 }

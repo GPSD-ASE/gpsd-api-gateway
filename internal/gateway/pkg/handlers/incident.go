@@ -21,7 +21,7 @@ func (h *Handler) GetAllIncidentsHandler(w http.ResponseWriter, r *http.Request)
 	ForwardRequest(w, r, getIncidentMgmtBaseURL(h.Config)+"/incidents", nil)
 }
 
-func (h *Handler) CreateIncidentHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) PostIncidentHandler(w http.ResponseWriter, r *http.Request) {
 	ForwardRequest(w, r, getIncidentMgmtBaseURL(h.Config)+"/incidents", nil)
 }
 
@@ -37,7 +37,7 @@ func (h *Handler) DeleteIncidentHandler(w http.ResponseWriter, r *http.Request) 
 	ForwardRequest(w, r, getIncidentMgmtBaseURL(h.Config)+"/incidents/"+id, nil)
 }
 
-func (h *Handler) ChangeIncidentStatusHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) UpdateIncidentStatusHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 	status := vars["status"]

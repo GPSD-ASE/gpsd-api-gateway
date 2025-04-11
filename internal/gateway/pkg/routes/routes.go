@@ -40,15 +40,18 @@ func RegisterRoutes(cc *config.Config, r *mux.Router) {
 	protectedRoutes.HandleFunc("/users/{id}", handler.DeleteUserHandler).Methods("DELETE")
 
 	// Map routes
-	protectedRoutes.HandleFunc("/zones", handler.ZonesHandler).Methods("GET")
-	protectedRoutes.HandleFunc("/routing", handler.RoutingHandler).Methods("GET")
-	protectedRoutes.HandleFunc("/evacuation", handler.EvacuationHandler).Methods("POST")
+	protectedRoutes.HandleFunc("/zones", handler.GetZonesHandler).Methods("GET")
+	protectedRoutes.HandleFunc("/route", handler.GetRouteHandler).Methods("GET")
+	protectedRoutes.HandleFunc("/routing", handler.GetRoutingHandler).Methods("GET")
+	protectedRoutes.HandleFunc("/safezones", handler.GetSafezonesHandler).Methods("GET")
+	protectedRoutes.HandleFunc("/safezones", handler.PostSafezonesHandler).Methods("POST")
+	protectedRoutes.HandleFunc("/evacuation", handler.PostEvacuationHandler).Methods("POST")
 	protectedRoutes.HandleFunc("/traffic", handler.TrafficHandler).Methods("GET")
 
 	// Incident routes
 	protectedRoutes.HandleFunc("/incidents", handler.GetAllIncidentsHandler).Methods("GET")
-	protectedRoutes.HandleFunc("/incidents", handler.CreateIncidentHandler).Methods("POST")
+	protectedRoutes.HandleFunc("/incidents", handler.PostIncidentHandler).Methods("POST")
 	protectedRoutes.HandleFunc("/incidents/{id}", handler.GetIncidentByIdHandler).Methods("GET")
 	protectedRoutes.HandleFunc("/incidents/{id}", handler.DeleteIncidentHandler).Methods("DELETE")
-	protectedRoutes.HandleFunc("/incidents/{id}/status/{status}", handler.ChangeIncidentStatusHandler).Methods("PATCH")
+	protectedRoutes.HandleFunc("/incidents/{id}/status/{status}", handler.UpdateIncidentStatusHandler).Methods("PATCH")
 }
