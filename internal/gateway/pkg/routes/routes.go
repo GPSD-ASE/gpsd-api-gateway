@@ -10,7 +10,8 @@ import (
 
 func RegisterRoutes(cc *config.Config, r *mux.Router) {
 
-	r.Use(middleware.RequestLogger, middleware.AuthMiddleware)
+	r.Use(middleware.RequestLogger)
+	// r.Use(middleware.RequestLogger, middleware.AuthMiddleware)
 
 	handler := handlers.NewHandler(cc)
 

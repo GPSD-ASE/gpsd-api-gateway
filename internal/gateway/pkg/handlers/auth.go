@@ -16,7 +16,7 @@ import (
 type UserData struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
-	Email string `json:"email"`
+	Email    string `json:"email"`
 	Role     string `json:"role,omitempty"`
 }
 
