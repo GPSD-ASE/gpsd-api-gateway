@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.34] - 2025-04-11
+## [0.1.35] - 2025-04-11
 
 
 ### Fixed
-\n19dda41 fix: temp remove auth middleware
+\n96b2d58 fix: segment into public and protected routes
 
