@@ -41,6 +41,4 @@ awk -v date="$DATE" -v new_ver="$NEW_VERSION" '/## \[Unreleased\]/{print; print 
 echo "NEW_VERSION=$NEW_VERSION"
 echo "new_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
 
-
-
 echo "Version bumped to $NEW_VERSION"
