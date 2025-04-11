@@ -7,11 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.31] - 2025-04-11
+## [0.1.32] - 2025-04-11
 
 
 ### Fixed
-\n21d9648 fix: add refresh in makefile
-7431244 fix: changelog formatting
-0f06631 fix: lint
+\nb3f29ca fix: remove node_modules
 
