@@ -132,17 +132,17 @@ func (h *Handler) GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetUserByIdHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/users"+id, nil)
+	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/users/"+id, nil)
 }
 
 func (h *Handler) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/users"+id, nil)
+	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/users/"+id, nil)
 }
 
 func (h *Handler) DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/users"+id, nil)
+	ForwardRequest(w, r, getUserMgmtBaseURL(h.Config)+"/users/"+id, nil)
 }
