@@ -7,9 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.32] - 2025-04-11
+## [0.1.33] - 2025-04-11
 
 
 ### Fixed
-\nb3f29ca fix: remove node_modules
+\n3a565e0 fix: set lint and test temp continue-on-error: true
+0dac4cf fix: add auth middleware to verify token
 
