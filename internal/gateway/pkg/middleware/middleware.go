@@ -32,6 +32,7 @@ func RequestLogger(next http.Handler) http.Handler {
 	})
 }
 
+/* AuthMiddleware validates bearer token for protected endpoints. */
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -39,7 +40,9 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
 			w.WriteHeader(http.StatusUnauthorized)
-			json.NewEncoder(w).Encode(handlers.ErrorResponse{Error: "no token provided"})
+			if e := json.NewEncoder(w).Encode(handlers.ErrorResponse{Error: "no token provided"}); e != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
 			return
 		}
 
@@ -48,14 +51,18 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			token = authHeader[7:]
 		} else {
 			w.WriteHeader(http.StatusUnauthorized)
-			json.NewEncoder(w).Encode(handlers.ErrorResponse{Error: "invalid authorization format"})
+			if e := json.NewEncoder(w).Encode(handlers.ErrorResponse{Error: "invalid authorization format"}); e != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
 			return
 		}
 
 		valid, err := handlers.VerifyToken(token)
 		if !valid || err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
-			json.NewEncoder(w).Encode(handlers.ErrorResponse{Error: err.Error()})
+			if e := json.NewEncoder(w).Encode(handlers.ErrorResponse{Error: err.Error()}); e != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
 			return
 		}
 
