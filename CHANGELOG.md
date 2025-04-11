@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.36] - 2025-04-11
+## [0.1.37] - 2025-04-11
 
 
 ### Fixed
-\n23df023 fix: /users/{id}
+\n9d78df1 fix: add more apis on map mgmt
 
