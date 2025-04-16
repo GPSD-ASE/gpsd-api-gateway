@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.39] - 2025-04-16
+## [0.1.40] - 2025-04-16
 
 
 ### Fixed
-\n8dac106 fix: add query parameters during request forward
+\nea32a4c fix: fetch ports and hosts
 
