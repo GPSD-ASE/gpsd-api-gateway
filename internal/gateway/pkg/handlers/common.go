@@ -47,7 +47,12 @@ func ForwardRequest(w http.ResponseWriter, r *http.Request, endpoint string, mod
 		actualBody = newBody
 	}
 
-	newReq, err := http.NewRequest(r.Method, endpoint, bytes.NewBuffer(actualBody))
+	urlWithQuery := endpoint
+	if r.URL.RawQuery != "" {
+		urlWithQuery = endpoint + "?" + r.URL.RawQuery
+	}
+
+	newReq, err := http.NewRequest(r.Method, urlWithQuery, bytes.NewBuffer(actualBody))
 	log.Printf("FORWARDING REQUEST: %s %s -> %s %s", r.Method, r.URL.String(), newReq.Method, newReq.URL.String())
 
 	if err != nil {
