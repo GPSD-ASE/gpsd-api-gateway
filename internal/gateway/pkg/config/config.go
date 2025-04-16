@@ -59,12 +59,16 @@ func LoadConfig(envs []string) *Config {
 		APIGatewayPort: GetEnvVars("API_GATEWAY_APP_PORT", "3000"),
 
 		// Service configs change dynamically based on release name
-		UserMgmtHost:     FindServiceEnvVar(envs, "USER_MGMT", "SERVICE_HOST", "localhost"),
-		UserMgmtPort:     FindServiceEnvVar(envs, "USER_MGMT", "SERVICE_PORT", "5500"),
-		MapMgmtHost:      FindServiceEnvVar(envs, "MAP_MGMT", "SERVICE_HOST", "localhost"),
-		MapMgmtPort:      FindServiceEnvVar(envs, "MAP_MGMT", "SERVICE_PORT", "9000"),
-		IncidentMgmtHost: FindServiceEnvVar(envs, "INCIDENT_MGMT", "SERVICE_HOST", "localhost"),
-		IncidentMgmtPort: FindServiceEnvVar(envs, "INCIDENT_MGMT", "SERVICE_PORT", "7000"),
+		UserMgmtHost:       FindServiceEnvVar(envs, "USER_MGMT", "SERVICE_HOST", "localhost"),
+		UserMgmtPort:       FindServiceEnvVar(envs, "USER_MGMT", "SERVICE_PORT", "5500"),
+		MapMgmtHost:        FindServiceEnvVar(envs, "MAP_MGMT", "SERVICE_HOST", "localhost"),
+		MapMgmtPort:        FindServiceEnvVar(envs, "MAP_MGMT", "SERVICE_PORT", "9000"),
+		IncidentMgmtHost:   FindServiceEnvVar(envs, "INCIDENT_MGMT", "SERVICE_HOST", "localhost"),
+		IncidentMgmtPort:   FindServiceEnvVar(envs, "INCIDENT_MGMT", "SERVICE_PORT", "7000"),
+		DecisionEngineHost: FindServiceEnvVar(envs, "RESOURCE_MAPPING", "SERVICE_HOST", "localhost"),
+		DecisionEnginePort: FindServiceEnvVar(envs, "RESOURCE_MAPPING", "SERVICE_PORT", "7134"),
+		EscalationMgmtHost: FindServiceEnvVar(envs, "ESCALATION_MGMT", "SERVICE_HOST", "localhost"),
+		EscalationMgmtPort: FindServiceEnvVar(envs, "ESCALATION_MGMT", "SERVICE_PORT", "8000"),
 	}
 
 	if cc.UserMgmtHost == "" || cc.UserMgmtPort == "" {
