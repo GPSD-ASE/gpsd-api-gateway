@@ -8,18 +8,22 @@ import (
 )
 
 type Config struct {
-	VaultAddr        string
-	VaultAuth        string
-	VaultRole        string
-	VaultToken       string
-	LogLevel         string
-	APIGatewayPort   string
-	UserMgmtHost     string
-	UserMgmtPort     string
-	MapMgmtHost      string
-	MapMgmtPort      string
-	IncidentMgmtHost string
-	IncidentMgmtPort string
+	VaultAddr          string
+	VaultAuth          string
+	VaultRole          string
+	VaultToken         string
+	LogLevel           string
+	APIGatewayPort     string
+	UserMgmtHost       string
+	UserMgmtPort       string
+	MapMgmtHost        string
+	MapMgmtPort        string
+	IncidentMgmtHost   string
+	IncidentMgmtPort   string
+	DecisionEngineHost string
+	DecisionEnginePort string
+	EscalationMgmtHost string
+	EscalationMgmtPort string
 }
 
 func FindServiceEnvVar(envs []string, service, field string, def string) string {
