@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.37] - 2025-04-11
+## [0.1.38] - 2025-04-16
 
 
 ### Fixed
-\n9d78df1 fix: add more apis on map mgmt
+\n0080bdf fix: expose decision engine and escalation api
 
