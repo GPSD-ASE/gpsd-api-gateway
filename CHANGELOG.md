@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.40] - 2025-04-16
+## [0.1.41] - 2025-04-16
 
 
 ### Fixed
-\nea32a4c fix: fetch ports and hosts
+\n123e2b6 fix: change to POST
 
