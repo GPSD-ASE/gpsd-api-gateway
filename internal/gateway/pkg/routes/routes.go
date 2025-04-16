@@ -57,5 +57,5 @@ func RegisterRoutes(cc *config.Config, r *mux.Router) {
 
 	/* Decision and escalation engine routes */
 	protectedRoutes.HandleFunc("/decision/incident", handler.PostDecisionHandler).Methods("POST")
-	protectedRoutes.HandleFunc("/incident-analysis", handler.PostIncidentAnalysis).Methods("GET")
+	protectedRoutes.HandleFunc("/incident-analysis", handler.PostIncidentAnalysis).Methods("POST")
 }
